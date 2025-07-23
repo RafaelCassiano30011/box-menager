@@ -1,5 +1,5 @@
 import { ProductRepository } from "../products-repository";
-import { drizzle } from "../../src/lib/drizzle";
+import { drizzle } from "../../lib/drizzle";
 import { eq, desc } from "drizzle-orm";
 import { products, Product, InsertProduct } from "@shared/schema";
 

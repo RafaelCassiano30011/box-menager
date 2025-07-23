@@ -44,6 +44,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      image: "",
       description: "",
       price: "",
       stock: "",
@@ -51,8 +52,6 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
       category: "",
     },
   });
-
-  const selectedCategory = watch("category");
 
   const createProductMutation = useMutation({
     mutationFn: async (data: InsertProduct) => {
@@ -116,6 +115,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
   const onSubmit = (data: FormData) => {
     const productData: InsertProduct = {
       name: data.name,
+      image: data.image || "",
       description: data.description || undefined,
       price: data.price,
       stock: parseInt(data.stock),
@@ -136,7 +136,6 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold flex items-center justify-between">
             {product ? "Editar Produto" : "Cadastrar Novo Produto"}
-            <Button variant="ghost" size="sm" onClick={onClose} className="text-gray-400 hover:text-white"></Button>
           </DialogTitle>
         </DialogHeader>
 
@@ -159,7 +158,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
                 Categoria
               </Label>
               <Input
-                value={selectedCategory}
+                id="category"
                 {...register("category")}
                 className="bg-dark-900 border-gray-600 focus:border-secondary-400"
               />

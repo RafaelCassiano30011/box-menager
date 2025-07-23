@@ -140,7 +140,7 @@ export default function Products() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas as Categorias</SelectItem>
-              {categories.map((category) => (
+              {categories?.filter(Boolean).map((category) => (
                 <SelectItem key={category} value={category}>
                   {category}
                 </SelectItem>
