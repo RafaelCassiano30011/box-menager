@@ -244,7 +244,6 @@ export default function Sales() {
 
             {/* Product Selection */}
             <div>
-              <Label className="text-gray-300">Adicionar Produtos</Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                   <Label htmlFor="product-select" className="text-gray-300 text-sm mb-2 block">Produto</Label>

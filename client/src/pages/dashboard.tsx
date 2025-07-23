@@ -1,5 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import { TrendingUp, TrendingDown, DollarSign, ShoppingBag, Package, Tags, AlertTriangle, ShoppingCart, Headphones, Laptop } from "lucide-react";
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  ShoppingBag,
+  Package,
+  Tags,
+  AlertTriangle,
+  ShoppingCart,
+  Headphones,
+  Laptop,
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import SalesChart from "@/components/charts/sales-chart";
@@ -33,19 +44,6 @@ export default function Dashboard() {
     );
   }
 
-  const getProductIcon = (category: string) => {
-    switch (category.toLowerCase()) {
-      case "eletrônicos":
-        return ShoppingCart;
-      case "acessórios":
-        return Headphones;
-      case "informática":
-        return Laptop;
-      default:
-        return Package;
-    }
-  };
-
   return (
     <section className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
@@ -61,9 +59,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Vendas Hoje</p>
-                  <p className="text-2xl font-bold text-primary-400">
-                    R$ {metrics?.todaySales.toFixed(2) || "0,00"}
-                  </p>
+                  <p className="text-2xl font-bold text-primary-400">R$ {metrics?.todaySales.toFixed(2) || "0,00"}</p>
                 </div>
                 <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
                   <DollarSign className="text-white" />
@@ -82,9 +78,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Produtos Vendidos</p>
-                  <p className="text-2xl font-bold text-secondary-400">
-                    {metrics?.todayProductsSold || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-secondary-400">{metrics?.todayProductsSold || 0}</p>
                 </div>
                 <div className="w-12 h-12 bg-gradient-to-r from-secondary-400 to-secondary-500 rounded-lg flex items-center justify-center">
                   <ShoppingBag className="text-white" />
@@ -103,9 +97,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Estoque Total</p>
-                  <p className="text-2xl font-bold text-accent-400">
-                    {metrics?.totalStock || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-accent-400">{metrics?.totalStock || 0}</p>
                 </div>
                 <div className="w-12 h-12 bg-gradient-to-r from-accent-400 to-accent-500 rounded-lg flex items-center justify-center">
                   <Package className="text-white" />
@@ -124,9 +116,7 @@ export default function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Produtos Cadastrados</p>
-                  <p className="text-2xl font-bold text-purple-400">
-                    {metrics?.totalProducts || 0}
-                  </p>
+                  <p className="text-2xl font-bold text-purple-400">{metrics?.totalProducts || 0}</p>
                 </div>
                 <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
                   <Tags className="text-white" />
@@ -187,9 +177,9 @@ export default function Dashboard() {
                       <div className="text-right">
                         <p className="font-semibold text-accent-400">R$ {Number(sale.total).toFixed(2)}</p>
                         <p className="text-gray-400 text-sm">
-                          {new Date(sale.createdAt).toLocaleTimeString('pt-BR', {
-                            hour: '2-digit',
-                            minute: '2-digit'
+                          {new Date(sale.createdAt).toLocaleTimeString("pt-BR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
                           })}
                         </p>
                       </div>
@@ -222,12 +212,14 @@ export default function Dashboard() {
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {lowStockProducts.slice(0, 3).map((product) => {
-                    const Icon = getProductIcon(product.category);
+                    //const Icon = getProductIcon(product.category);
                     return (
                       <div key={product.id} className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center space-x-2">
-                            <Icon className="w-4 h-4 text-red-400" />
+                            <img className="w-24 h-24 rounded-lg" src={product.image} alt={product.name} />
+
+                            {/*<Icon className="w-4 h-4 text-red-400" />*/}
                             <h4 className="font-medium">{product.name}</h4>
                           </div>
                           <span className="text-red-400 text-sm font-bold">{product.stock} unidades</span>
