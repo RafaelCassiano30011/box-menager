@@ -1,4 +1,4 @@
-import { drizzle } from "./lib/drizzle";
+import { drizzle } from "./src/lib/drizzle";
 import { products } from "@shared/schema";
 
 const sampleProducts = [

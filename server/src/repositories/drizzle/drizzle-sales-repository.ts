@@ -1,5 +1,5 @@
 import { SalesRepository } from "../sales-repository";
-import { drizzle } from "../../lib/drizzle";
+import { drizzle } from "../../src/lib/drizzle";
 import { eq, desc } from "drizzle-orm";
 import { sales, saleItems, SaleWithItems, SaleItem, InsertSale, InsertSaleItem } from "@shared/schema";
 
