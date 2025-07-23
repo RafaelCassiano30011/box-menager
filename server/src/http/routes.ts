@@ -1,38 +1,24 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./postgres-storage";
+import { storage } from "../postgres-storage";
 import { insertProductSchema } from "@shared/schema";
 import { z } from "zod";
+import { getProducts } from "./controller/get-products-controller";
+import { createProduct } from "./controller/create-product-controller";
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export async function appRoutes(app: Express): Promise<Server> {
   // Products routes
-  app.get("/api/products", async (req, res) => {
-    try {
-      const products = await storage.getProducts();
-      res.json(products);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch products" });
-    }
-  });
+  app.get("/api/products", getProducts);
 
-  app.post("/api/products", async (req, res) => {
-    try {
-      const productData = insertProductSchema.parse(req.body);
-      const product = await storage.createProduct(productData);
-      res.status(201).json(product);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ message: "Invalid product data", errors: error.errors });
-      } else {
-        res.status(500).json({ message: "Failed to create product" });
-      }
-    }
-  });
+  
+
+  app.post("/api/products", createProduct);
 
   app.put("/api/products/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const productData = insertProductSchema.partial().parse(req.body);
+      const productData = insertProductSchema.parse(req.body);
+
       const product = await storage.updateProduct(id, productData);
 
       if (!product) {
