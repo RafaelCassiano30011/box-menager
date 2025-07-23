@@ -1,5 +1,5 @@
 import { StockMovementRepository } from "../stock-movements-repository";
-import { drizzle } from "../../lib/drizzle";
+import { drizzle } from "../../src/lib/drizzle";
 import { eq, desc } from "drizzle-orm";
 import { stockMovements, StockMovement, InsertStockMovement } from "@shared/schema";
 
