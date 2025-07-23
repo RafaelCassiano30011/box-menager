@@ -246,47 +246,60 @@ export default function Sales() {
             <div>
               <Label className="text-gray-300">Adicionar Produtos</Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Select value={selectedProductId} onValueChange={setSelectedProductId}>
-                  <SelectTrigger className="bg-dark-900 border-gray-600 focus:border-primary-400">
-                    <SelectValue placeholder="Selecione um produto" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {products?.filter(p => p.stock > 0).map((product) => (
-                      <SelectItem key={product.id} value={product.id.toString()}>
-                        {product.name} - R$ {Number(product.price).toFixed(2)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div>
+                  <Label htmlFor="product-select" className="text-gray-300 text-sm mb-2 block">Produto</Label>
+                  <Select value={selectedProductId} onValueChange={setSelectedProductId}>
+                    <SelectTrigger id="product-select" className="bg-dark-900 border-gray-600 focus:border-primary-400">
+                      <SelectValue placeholder="Selecione um produto" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {products?.filter(p => p.stock > 0).map((product) => (
+                        <SelectItem key={product.id} value={product.id.toString()}>
+                          {product.name} - R$ {Number(product.price).toFixed(2)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 
-                <Input
-                  type="number"
-                  min="1"
-                  placeholder="Quantidade"
-                  value={selectedQuantity}
-                  onChange={(e) => setSelectedQuantity(e.target.value)}
-                  className="bg-dark-900 border-gray-600 focus:border-primary-400"
-                />
+                <div>
+                  <Label htmlFor="quantity-input" className="text-gray-300 text-sm mb-2 block">Quantidade</Label>
+                  <Input
+                    id="quantity-input"
+                    type="number"
+                    min="1"
+                    placeholder="Quantidade"
+                    value={selectedQuantity}
+                    onChange={(e) => setSelectedQuantity(e.target.value)}
+                    className="bg-dark-900 border-gray-600 focus:border-primary-400"
+                  />
+                </div>
                 
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  placeholder="Desconto %"
-                  value={selectedDiscount}
-                  onChange={(e) => setSelectedDiscount(e.target.value)}
-                  className="bg-dark-900 border-gray-600 focus:border-primary-400"
-                />
+                <div>
+                  <Label htmlFor="discount-input" className="text-gray-300 text-sm mb-2 block">Desconto (Opcional)</Label>
+                  <Input
+                    id="discount-input"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    placeholder="Desconto %"
+                    value={selectedDiscount}
+                    onChange={(e) => setSelectedDiscount(e.target.value)}
+                    className="bg-dark-900 border-gray-600 focus:border-primary-400"
+                  />
+                </div>
                 
-                <Button
-                  type="button"
-                  onClick={addProductToCart}
-                  className="bg-gradient-to-r from-secondary-400 to-secondary-500 hover:from-secondary-500 hover:to-secondary-600"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar
-                </Button>
+                <div className="flex items-end">
+                  <Button
+                    type="button"
+                    onClick={addProductToCart}
+                    className="w-full bg-gradient-to-r from-secondary-400 to-secondary-500 hover:from-secondary-500 hover:to-secondary-600"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Adicionar
+                  </Button>
+                </div>
               </div>
             </div>
 

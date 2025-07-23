@@ -8,6 +8,14 @@ CashFlow Pro is a modern inventory and sales management system built with React,
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+### January 23, 2025
+- Significantly improved mobile responsiveness across all pages (Dashboard, Products, Sales, Stock, Reports)
+- Enhanced sidebar mobile experience with dynamic width and backdrop blur overlay
+- Optimized grid layouts and button sizing for different screen sizes
+- Added proper labels for "Quantidade" and "Desconto (Opcional)" in the sales section for better user experience
+
 ## System Architecture
 
 ### Frontend Architecture
