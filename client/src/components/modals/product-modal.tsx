@@ -130,61 +130,48 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
     }
   };
 
-  const categories = ["Eletrônicos", "Acessórios", "Informática"];
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-dark-800 border-secondary-400/30 max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold flex items-center justify-between">
             {product ? "Editar Produto" : "Cadastrar Novo Produto"}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="text-gray-400 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </Button>
+            <Button variant="ghost" size="sm" onClick={onClose} className="text-gray-400 hover:text-white"></Button>
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="name" className="text-gray-300">Nome do Produto</Label>
+              <Label htmlFor="name" className="text-gray-300">
+                Nome do Produto
+              </Label>
               <Input
                 id="name"
                 {...register("name")}
                 className="bg-dark-900 border-gray-600 focus:border-secondary-400"
               />
-              {errors.name && (
-                <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>
-              )}
+              {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>}
             </div>
-            
+
             <div>
-              <Label htmlFor="category" className="text-gray-300">Categoria</Label>
-              <Select value={selectedCategory} onValueChange={(value) => setValue("category", value)}>
-                <SelectTrigger className="bg-dark-900 border-gray-600 focus:border-secondary-400">
-                  <SelectValue placeholder="Selecione uma categoria" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.category && (
-                <p className="text-red-400 text-sm mt-1">{errors.category.message}</p>
-              )}
+              <Label htmlFor="category" className="text-gray-300">
+                Categoria
+              </Label>
+              <Input
+                value={selectedCategory}
+                {...register("category")}
+                className="bg-dark-900 border-gray-600 focus:border-secondary-400"
+              />
+
+              {errors.category && <p className="text-red-400 text-sm mt-1">{errors.category.message}</p>}
             </div>
           </div>
 
           <div>
-            <Label htmlFor="description" className="text-gray-300">Descrição</Label>
+            <Label htmlFor="description" className="text-gray-300">
+              Descrição
+            </Label>
             <Textarea
               id="description"
               rows={3}
@@ -195,7 +182,9 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="price" className="text-gray-300">Preço (R$)</Label>
+              <Label htmlFor="price" className="text-gray-300">
+                Preço (R$)
+              </Label>
               <Input
                 id="price"
                 type="number"
@@ -204,11 +193,9 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
                 {...register("price")}
                 className="bg-dark-900 border-gray-600 focus:border-secondary-400"
               />
-              {errors.price && (
-                <p className="text-red-400 text-sm mt-1">{errors.price.message}</p>
-              )}
+              {errors.price && <p className="text-red-400 text-sm mt-1">{errors.price.message}</p>}
             </div>
-            
+
             <div>
               <Label htmlFor="stock" className="text-gray-300">
                 {product ? "Estoque Atual" : "Estoque Inicial"}
@@ -220,13 +207,13 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
                 {...register("stock")}
                 className="bg-dark-900 border-gray-600 focus:border-secondary-400"
               />
-              {errors.stock && (
-                <p className="text-red-400 text-sm mt-1">{errors.stock.message}</p>
-              )}
+              {errors.stock && <p className="text-red-400 text-sm mt-1">{errors.stock.message}</p>}
             </div>
-            
+
             <div>
-              <Label htmlFor="minStock" className="text-gray-300">Estoque Mínimo</Label>
+              <Label htmlFor="minStock" className="text-gray-300">
+                Estoque Mínimo
+              </Label>
               <Input
                 id="minStock"
                 type="number"
@@ -234,9 +221,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
                 {...register("minStock")}
                 className="bg-dark-900 border-gray-600 focus:border-secondary-400"
               />
-              {errors.minStock && (
-                <p className="text-red-400 text-sm mt-1">{errors.minStock.message}</p>
-              )}
+              {errors.minStock && <p className="text-red-400 text-sm mt-1">{errors.minStock.message}</p>}
             </div>
           </div>
 

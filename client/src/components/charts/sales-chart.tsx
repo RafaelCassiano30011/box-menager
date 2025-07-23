@@ -19,16 +19,16 @@ export default function SalesChart() {
     // Get last 7 days
     const last7Days: ChartData[] = [];
     const today = new Date();
-    
+
     for (let i = 6; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(today.getDate() - i);
       date.setHours(0, 0, 0, 0);
-      
+
       const nextDay = new Date(date);
       nextDay.setDate(date.getDate() + 1);
-      
-      const daySales = sales.filter(sale => {
+
+      const daySales = sales.filter((sale) => {
         const saleDate = new Date(sale.createdAt);
         return saleDate >= date && saleDate < nextDay;
       });
@@ -37,7 +37,7 @@ export default function SalesChart() {
       const salesCount = daySales.length;
 
       last7Days.push({
-        date: date.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit' }),
+        date: date.toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit" }),
         sales: salesCount,
         revenue: dayRevenue,
       });
@@ -74,12 +74,8 @@ export default function SalesChart() {
         <div className="bg-dark-800 border border-primary-500/30 rounded-lg p-3 shadow-xl">
           <p className="text-gray-300 mb-2">{label}</p>
           <div className="space-y-1">
-            <p className="text-primary-400 font-semibold">
-              Vendas: {payload[0].value}
-            </p>
-            <p className="text-accent-400 font-semibold">
-              Receita: R$ {payload[1]?.value?.toFixed(2) || '0,00'}
-            </p>
+            <p className="text-primary-400 font-semibold">Vendas: {payload[0].value}</p>
+            <p className="text-accent-400 font-semibold">Receita: R$ {payload[1]?.value?.toFixed(2) || "0,00"}</p>
           </div>
         </div>
       );
@@ -101,26 +97,14 @@ export default function SalesChart() {
               <stop offset="95%" stopColor="hsl(166, 72%, 40%)" stopOpacity={0.1} />
             </linearGradient>
           </defs>
-          
+
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(240, 3.7%, 15.9%)" />
-          
-          <XAxis 
-            dataKey="date" 
-            stroke="hsl(240, 5%, 64.9%)"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
-          />
-          
-          <YAxis 
-            stroke="hsl(240, 5%, 64.9%)"
-            fontSize={12}
-            tickLine={false}
-            axisLine={false}
-            yAxisId="sales"
-          />
-          
-          <YAxis 
+
+          <XAxis dataKey="date" stroke="hsl(240, 5%, 64.9%)" fontSize={12} tickLine={false} axisLine={false} />
+
+          <YAxis stroke="hsl(240, 5%, 64.9%)" fontSize={12} tickLine={false} axisLine={false} yAxisId="sales" />
+
+          <YAxis
             stroke="hsl(240, 5%, 64.9%)"
             fontSize={12}
             tickLine={false}
@@ -128,9 +112,9 @@ export default function SalesChart() {
             orientation="right"
             yAxisId="revenue"
           />
-          
+
           <Tooltip content={<CustomTooltip />} />
-          
+
           <Area
             type="monotone"
             dataKey="sales"
@@ -139,7 +123,7 @@ export default function SalesChart() {
             fill="url(#salesGradient)"
             yAxisId="sales"
           />
-          
+
           <Area
             type="monotone"
             dataKey="revenue"

@@ -15,9 +15,9 @@ export default function Products() {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [stockFilter, setStockFilter] = useState("all");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingIsModalOpen, setEditingIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -46,24 +46,26 @@ export default function Products() {
   });
 
   const filteredProducts = products?.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description?.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
-    
-    const matchesStock = stockFilter === "all" || 
-                        (stockFilter === "in-stock" && product.stock > 0) ||
-                        (stockFilter === "low-stock" && product.stock <= product.minStock) ||
-                        (stockFilter === "out-of-stock" && product.stock === 0);
-    
+
+    const matchesStock =
+      stockFilter === "all" ||
+      (stockFilter === "in-stock" && product.stock > 0) ||
+      (stockFilter === "low-stock" && product.stock <= product.minStock) ||
+      (stockFilter === "out-of-stock" && product.stock === 0);
+
     return matchesSearch && matchesCategory && matchesStock;
   });
 
-  const categories = Array.from(new Set(products?.map(p => p.category) || []));
+  const categories = Array.from(new Set(products?.map((p) => p.category) || []));
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
-    setIsModalOpen(true);
+    setEditingIsModalOpen(true);
   };
 
   const handleDelete = (product: Product) => {
@@ -82,19 +84,6 @@ export default function Products() {
     if (product.stock === 0) return "Sem estoque";
     if (product.stock <= product.minStock) return "Estoque baixo";
     return "Em estoque";
-  };
-
-  const getCategoryIcon = (category: string) => {
-    switch (category.toLowerCase()) {
-      case "eletrônicos":
-        return "📱";
-      case "acessórios":
-        return "🎧";
-      case "informática":
-        return "💻";
-      default:
-        return "📦";
-    }
   };
 
   if (isLoading) {
@@ -120,10 +109,10 @@ export default function Products() {
             <h2 className="text-2xl sm:text-3xl font-bold mb-2">Produtos</h2>
             <p className="text-gray-400">Gerencie seu catálogo de produtos</p>
           </div>
-          <Button 
+          <Button
             onClick={() => {
               setEditingProduct(null);
-              setIsModalOpen(true);
+              setEditingIsModalOpen(true);
             }}
             className="bg-gradient-to-r from-secondary-400 to-secondary-500 hover:from-secondary-500 hover:to-secondary-600 w-full sm:w-auto"
           >
@@ -144,7 +133,7 @@ export default function Products() {
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           </div>
-          
+
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
             <SelectTrigger className="bg-dark-800 border-gray-600 focus:border-secondary-400">
               <SelectValue placeholder="Todas as Categorias" />
@@ -175,35 +164,25 @@ export default function Products() {
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {filteredProducts?.map((product) => (
-            <Card key={product.id} className="bg-dark-800 border-secondary-400/30 hover:border-secondary-400/50 hover:shadow-lg transition-all duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-secondary-400 to-secondary-500 rounded-lg flex items-center justify-center text-xl">
-                    {getCategoryIcon(product.category)}
-                  </div>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEdit(product)}
-                      className="text-gray-400 hover:text-primary-400"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDelete(product)}
-                      className="text-gray-400 hover:text-red-400"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
+            <Card
+              key={product.id}
+              className="bg-dark-800 border-secondary-400/30 hover:border-secondary-400/50 hover:shadow-lg transition-all duration-300"
+            >
+              <CardContent className="relative p-6">
+                <div className="w-full absolute left-0 flex items-start justify-between px-7 pt-2">
+                  <Button size="sm" onClick={() => handleEdit(product)}>
+                    <Edit className="w-4 h-4 text-white" />
+                  </Button>
+                  <Button size="sm" onClick={() => handleDelete(product)}>
+                    <Trash2 className="w-4 h-4 text-white" />
+                  </Button>
                 </div>
-                
+
+                <img className="w-full rounded-lg mb-2" src={product.image} alt={product.name} />
+
                 <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
                 <p className="text-gray-400 text-sm mb-4 line-clamp-2">{product.description}</p>
-                
+
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Preço:</span>
@@ -211,11 +190,15 @@ export default function Products() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Estoque:</span>
-                    <span className={`font-semibold ${
-                      product.stock === 0 ? 'text-red-400' : 
-                      product.stock <= product.minStock ? 'text-yellow-400' : 
-                      'text-secondary-400'
-                    }`}>
+                    <span
+                      className={`font-semibold ${
+                        product.stock === 0
+                          ? "text-red-400"
+                          : product.stock <= product.minStock
+                          ? "text-yellow-400"
+                          : "text-secondary-400"
+                      }`}
+                    >
                       {product.stock} unidades
                     </span>
                   </div>
@@ -227,21 +210,19 @@ export default function Products() {
                   </div>
                   <div className="flex justify-between text-sm items-center">
                     <span className="text-gray-400">Status:</span>
-                    <Badge variant={getStockBadgeColor(product)}>
-                      {getStockText(product)}
-                    </Badge>
+                    <Badge variant={getStockBadgeColor(product)}>{getStockText(product)}</Badge>
                   </div>
                 </div>
-                
+
                 <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     className="flex-1 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700"
                   >
                     <Package2 className="w-4 h-4 sm:mr-2" />
                     <span className="hidden sm:inline">Ajustar</span>
                   </Button>
-                  <Button 
+                  <Button
                     size="sm"
                     className="flex-1 bg-gradient-to-r from-accent-400 to-accent-500 hover:from-accent-500 hover:to-accent-600"
                     disabled={product.stock === 0}
@@ -264,9 +245,9 @@ export default function Products() {
         )}
 
         <ProductModal
-          isOpen={isModalOpen}
+          isOpen={editingIsModalOpen}
           onClose={() => {
-            setIsModalOpen(false);
+            setEditingIsModalOpen(false);
             setEditingProduct(null);
           }}
           product={editingProduct}
