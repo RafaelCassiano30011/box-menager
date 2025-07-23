@@ -59,7 +59,7 @@ export default function Products() {
     return matchesSearch && matchesCategory && matchesStock;
   });
 
-  const categories = [...new Set(products?.map(p => p.category) || [])];
+  const categories = Array.from(new Set(products?.map(p => p.category) || []));
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
@@ -113,11 +113,11 @@ export default function Products() {
   }
 
   return (
-    <section className="p-8">
+    <section className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-3xl font-bold mb-2">Produtos</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">Produtos</h2>
             <p className="text-gray-400">Gerencie seu catálogo de produtos</p>
           </div>
           <Button 
@@ -125,7 +125,7 @@ export default function Products() {
               setEditingProduct(null);
               setIsModalOpen(true);
             }}
-            className="mt-4 sm:mt-0 bg-gradient-to-r from-secondary-400 to-secondary-500 hover:from-secondary-500 hover:to-secondary-600"
+            className="bg-gradient-to-r from-secondary-400 to-secondary-500 hover:from-secondary-500 hover:to-secondary-600 w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 mr-2" />
             Novo Produto
@@ -133,7 +133,7 @@ export default function Products() {
         </div>
 
         {/* Search and Filter */}
-        <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="relative">
             <Input
               type="text"
@@ -173,7 +173,7 @@ export default function Products() {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {filteredProducts?.map((product) => (
             <Card key={product.id} className="bg-dark-800 border-secondary-400/30 hover:border-secondary-400/50 hover:shadow-lg transition-all duration-300">
               <CardContent className="p-6">
@@ -233,17 +233,21 @@ export default function Products() {
                   </div>
                 </div>
                 
-                <div className="flex space-x-2">
-                  <Button className="flex-1 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700">
-                    <Package2 className="w-4 h-4 mr-2" />
-                    Ajustar
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                  <Button 
+                    size="sm" 
+                    className="flex-1 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700"
+                  >
+                    <Package2 className="w-4 h-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Ajustar</span>
                   </Button>
                   <Button 
+                    size="sm"
                     className="flex-1 bg-gradient-to-r from-accent-400 to-accent-500 hover:from-accent-500 hover:to-accent-600"
                     disabled={product.stock === 0}
                   >
-                    <ShoppingCart className="w-4 h-4 mr-2" />
-                    Vender
+                    <ShoppingCart className="w-4 h-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Vender</span>
                   </Button>
                 </div>
               </CardContent>

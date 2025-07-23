@@ -47,15 +47,15 @@ export default function Dashboard() {
   };
 
   return (
-    <section className="p-8">
+    <section className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Dashboard</h2>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-2">Dashboard</h2>
           <p className="text-gray-400">Visão geral do seu negócio</p>
         </div>
 
         {/* Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card className="bg-dark-800 border-primary-500/30 hover:border-primary-400/50 transition-all duration-300">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -142,7 +142,7 @@ export default function Dashboard() {
         </div>
 
         {/* Charts and Recent Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* Sales Chart */}
           <Card className="bg-dark-800 border-primary-500/30">
             <CardHeader>
@@ -206,21 +206,21 @@ export default function Dashboard() {
 
         {/* Low Stock Alert */}
         {!lowStockLoading && lowStockProducts && lowStockProducts.length > 0 && (
-          <div className="mt-8">
+          <div className="mt-6 sm:mt-8">
             <Card className="bg-dark-800 border-red-500/30">
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-xl font-semibold text-red-400 flex items-center">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <CardTitle className="text-lg sm:text-xl font-semibold text-red-400 flex items-center">
                     <AlertTriangle className="w-5 h-5 mr-2" />
                     Alertas de Estoque Baixo
                   </CardTitle>
-                  <span className="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-sm font-medium self-start sm:self-auto">
                     {lowStockProducts.length} produtos
                   </span>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {lowStockProducts.slice(0, 3).map((product) => {
                     const Icon = getProductIcon(product.category);
                     return (

@@ -202,10 +202,10 @@ export default function Sales() {
   }
 
   return (
-    <section className="p-8">
+    <section className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Vendas</h2>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-2">Vendas</h2>
           <p className="text-gray-400">Registre e acompanhe suas vendas</p>
         </div>
 
@@ -245,7 +245,7 @@ export default function Sales() {
             {/* Product Selection */}
             <div>
               <Label className="text-gray-300">Adicionar Produtos</Label>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Select value={selectedProductId} onValueChange={setSelectedProductId}>
                   <SelectTrigger className="bg-dark-900 border-gray-600 focus:border-primary-400">
                     <SelectValue placeholder="Selecione um produto" />
@@ -298,10 +298,10 @@ export default function Sales() {
               ) : (
                 <div className="space-y-2">
                   {cartItems.map((item) => (
-                    <div key={item.productId} className="flex items-center justify-between p-3 bg-dark-800 rounded-lg">
-                      <div className="flex items-center space-x-3">
+                    <div key={item.productId} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-dark-800 rounded-lg gap-3">
+                      <div className="flex items-center space-x-3 flex-1">
                         <span className="text-xl">📦</span>
-                        <div>
+                        <div className="flex-1">
                           <p className="font-medium">{item.productName}</p>
                           <p className="text-gray-400 text-sm">
                             {item.quantity}x unidades - R$ {item.unitPrice.toFixed(2)} cada
@@ -309,7 +309,7 @@ export default function Sales() {
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-4">
+                      <div className="flex items-center justify-between sm:justify-end space-x-4">
                         <span className="font-semibold text-accent-400">R$ {item.subtotal.toFixed(2)}</span>
                         <Button
                           variant="ghost"
@@ -331,7 +331,7 @@ export default function Sales() {
               </div>
             </div>
 
-            <div className="flex space-x-4">
+            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <Button
                 type="button"
                 variant="outline"
@@ -356,14 +356,14 @@ export default function Sales() {
         {/* Sales History */}
         <Card className="bg-dark-800 border-secondary-400/30">
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xl font-semibold">Histórico de Vendas</CardTitle>
-              <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <CardTitle className="text-lg sm:text-xl font-semibold">Histórico de Vendas</CardTitle>
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
                 <Input
                   type="date"
                   className="bg-dark-900 border-gray-600 focus:border-secondary-400"
                 />
-                <Button className="bg-gradient-to-r from-secondary-400 to-secondary-500 hover:from-secondary-500 hover:to-secondary-600">
+                <Button className="bg-gradient-to-r from-secondary-400 to-secondary-500 hover:from-secondary-500 hover:to-secondary-600 w-full sm:w-auto">
                   <Download className="w-4 h-4 mr-2" />
                   Exportar
                 </Button>

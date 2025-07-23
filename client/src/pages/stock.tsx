@@ -106,20 +106,20 @@ export default function Stock() {
   }
 
   return (
-    <section className="p-8">
+    <section className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Controle de Estoque</h2>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-2">Controle de Estoque</h2>
           <p className="text-gray-400">Gerencie entradas e saídas de produtos</p>
         </div>
 
         {/* Stock Movement Form */}
-        <Card className="bg-dark-800 border-accent-400/30 mb-8">
+        <Card className="bg-dark-800 border-accent-400/30 mb-6 sm:mb-8">
           <CardHeader>
-            <CardTitle className="text-xl font-semibold">Movimentação de Estoque</CardTitle>
+            <CardTitle className="text-lg sm:text-xl font-semibold">Movimentação de Estoque</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <Label htmlFor="product" className="text-gray-300">Produto</Label>
                 <Select value={selectedProductId} onValueChange={setSelectedProductId}>
@@ -190,9 +190,9 @@ export default function Stock() {
         {/* Stock History */}
         <Card className="bg-dark-800 border-primary-500/30">
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-xl font-semibold">Histórico de Movimentações</CardTitle>
-              <Button className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <CardTitle className="text-lg sm:text-xl font-semibold">Histórico de Movimentações</CardTitle>
+              <Button className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 w-full sm:w-auto">
                 <Download className="w-4 h-4 mr-2" />
                 Exportar
               </Button>

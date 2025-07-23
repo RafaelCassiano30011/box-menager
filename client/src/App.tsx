@@ -15,7 +15,8 @@ function Router() {
   return (
     <div className="min-h-screen flex bg-dark-900 text-white">
       <Sidebar />
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto lg:ml-0">
+        <div className="lg:hidden h-16" /> {/* Spacer for mobile menu button */}
         <Switch>
           <Route path="/" component={Dashboard} />
           <Route path="/products" component={Products} />

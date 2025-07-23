@@ -113,17 +113,17 @@ export default function Reports() {
   };
 
   return (
-    <section className="p-8">
+    <section className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Relatórios</h2>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-2">Relatórios</h2>
           <p className="text-gray-400">Análises e estatísticas do seu negócio</p>
         </div>
 
         {/* Report Filters */}
-        <Card className="bg-dark-800 border-purple-500/30 mb-8">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="bg-dark-800 border-purple-500/30 mb-6 sm:mb-8">
+          <CardContent className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <Label htmlFor="period" className="text-gray-300">Período</Label>
                 <Select value={period} onValueChange={setPeriod}>
@@ -174,7 +174,7 @@ export default function Reports() {
         </Card>
 
         {/* Report Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card className="bg-dark-800 border-primary-500/30">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
@@ -228,7 +228,7 @@ export default function Reports() {
         </div>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
           {/* Sales Chart */}
           <Card className="bg-dark-800 border-primary-500/30">
             <CardHeader>
@@ -297,7 +297,7 @@ export default function Reports() {
             <CardTitle className="text-xl font-semibold">Exportar Relatórios</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <Button
                 onClick={exportPDF}
                 className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 p-6 h-auto flex flex-col items-center space-y-2"
