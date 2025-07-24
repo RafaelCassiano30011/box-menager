@@ -5,5 +5,5 @@ export interface StockMovementRepository {
 
   createStockMovement(movement: InsertStockMovement): Promise<StockMovement>;
 
-  getProductStockHistory(productId: number): Promise<StockMovement[]>;
+  getProductStockHistory(productId: string): Promise<StockMovement[]>;
 }

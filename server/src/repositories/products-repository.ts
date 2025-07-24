@@ -3,13 +3,13 @@ import { Product, InsertProduct } from "@shared/schema";
 export interface ProductRepository {
   getProducts(): Promise<Product[]>;
 
-  getProduct(id: number): Promise<Product | undefined>;
+  getProduct(id: string): Promise<Product | undefined>;
 
   createProduct(product: InsertProduct): Promise<Product>;
 
-  updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined>;
+  updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined>;
 
-  deleteProduct(id: number): Promise<boolean>;
+  deleteProduct(id: string): Promise<boolean>;
 
-  updateProductStock(id: number, stock: number): Promise<Product | undefined>;
+  updateProductStock(id: string, stock: number): Promise<Product | undefined>;
 }

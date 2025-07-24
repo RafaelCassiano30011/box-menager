@@ -1,13 +1,13 @@
 CREATE TABLE "categories" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	CONSTRAINT "categories_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
 CREATE TABLE "products" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
-	"image" text DEFAULT '',
+	"image" text NOT NULL,
 	"description" text,
 	"price" numeric(10, 2) NOT NULL,
 	"stock" integer DEFAULT 0 NOT NULL,
@@ -17,9 +17,9 @@ CREATE TABLE "products" (
 );
 --> statement-breakpoint
 CREATE TABLE "sale_items" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"sale_id" integer NOT NULL,
-	"product_id" integer NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"sale_id" uuid NOT NULL,
+	"product_id" uuid NOT NULL,
 	"product_name" text NOT NULL,
 	"quantity" integer NOT NULL,
 	"unit_price" numeric(10, 2) NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE "sale_items" (
 );
 --> statement-breakpoint
 CREATE TABLE "sales" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"customer_name" text,
 	"payment_method" text NOT NULL,
 	"total" numeric(10, 2) NOT NULL,
@@ -36,8 +36,8 @@ CREATE TABLE "sales" (
 );
 --> statement-breakpoint
 CREATE TABLE "stock_movements" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"product_id" integer NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"product_id" uuid NOT NULL,
 	"type" text NOT NULL,
 	"quantity" integer NOT NULL,
 	"previous_stock" integer NOT NULL,

@@ -77,7 +77,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
   });
 
   const updateProductMutation = useMutation({
-    mutationFn: async (data: { id: number; product: Partial<InsertProduct> }) => {
+    mutationFn: async (data: { id: string; product: Partial<InsertProduct> }) => {
       return await apiRequest("PUT", `/api/products/${data.id}`, data.product);
     },
     onSuccess: () => {
@@ -102,6 +102,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
   useEffect(() => {
     if (product) {
       setValue("name", product.name);
+      setValue("image", product.image);
       setValue("description", product.description || "");
       setValue("price", product.price);
       setValue("stock", product.stock.toString());
@@ -115,7 +116,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
   const onSubmit = (data: FormData) => {
     const productData: InsertProduct = {
       name: data.name,
-      image: data.image || "",
+      image: data.image,
       description: data.description || undefined,
       price: data.price,
       stock: parseInt(data.stock),
