@@ -12,7 +12,7 @@ import { apiRequest } from "@/lib/queryClient";
 import type { Product, SaleWithItems } from "@shared/schema";
 
 interface SaleItem {
-  productId: number;
+  productId: string;
   productName: string;
   quantity: number;
   unitPrice: number;
@@ -27,7 +27,7 @@ export default function Sales() {
   const [selectedQuantity, setSelectedQuantity] = useState("1");
   const [selectedDiscount, setSelectedDiscount] = useState("0");
   const [cartItems, setCartItems] = useState<SaleItem[]>([]);
-  
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -73,7 +73,7 @@ export default function Sales() {
       return;
     }
 
-    const product = products?.find(p => p.id === parseInt(selectedProductId));
+    const product = products?.find((p) => p.id === selectedProductId);
     if (!product) return;
 
     if (product.stock < parseInt(selectedQuantity)) {
@@ -86,14 +86,14 @@ export default function Sales() {
     }
 
     // Check if product is already in cart
-    const existingItemIndex = cartItems.findIndex(item => item.productId === product.id);
-    
+    const existingItemIndex = cartItems.findIndex((item) => item.productId === product.id);
+
     if (existingItemIndex >= 0) {
       // Update existing item
       const updatedItems = [...cartItems];
       const existingItem = updatedItems[existingItemIndex];
       const newQuantity = existingItem.quantity + parseInt(selectedQuantity);
-      
+
       if (newQuantity > product.stock) {
         toast({
           title: "Erro",
@@ -105,22 +105,22 @@ export default function Sales() {
 
       const unitPrice = Number(product.price);
       const discount = Number(selectedDiscount);
-      const subtotal = (unitPrice * newQuantity) * (1 - discount / 100);
+      const subtotal = unitPrice * newQuantity * (1 - discount / 100);
 
       updatedItems[existingItemIndex] = {
         ...existingItem,
         quantity: newQuantity,
         discount,
-        subtotal
+        subtotal,
       };
-      
+
       setCartItems(updatedItems);
     } else {
       // Add new item
       const unitPrice = Number(product.price);
       const quantity = parseInt(selectedQuantity);
       const discount = Number(selectedDiscount);
-      const subtotal = (unitPrice * quantity) * (1 - discount / 100);
+      const subtotal = unitPrice * quantity * (1 - discount / 100);
 
       const newItem: SaleItem = {
         productId: product.id,
@@ -128,7 +128,7 @@ export default function Sales() {
         quantity,
         unitPrice,
         discount,
-        subtotal
+        subtotal,
       };
 
       setCartItems([...cartItems, newItem]);
@@ -139,8 +139,8 @@ export default function Sales() {
     setSelectedDiscount("0");
   };
 
-  const removeFromCart = (productId: number) => {
-    setCartItems(cartItems.filter(item => item.productId !== productId));
+  const removeFromCart = (productId: string) => {
+    setCartItems(cartItems.filter((item) => item.productId !== productId));
   };
 
   const getTotalAmount = () => {
@@ -166,13 +166,13 @@ export default function Sales() {
     const saleData = {
       customerName: customerName || undefined,
       paymentMethod,
-      items: cartItems.map(item => ({
+      items: cartItems.map((item) => ({
         productId: item.productId,
         productName: item.productName,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
         discount: item.discount,
-      }))
+      })),
     };
 
     createSaleMutation.mutate(saleData);
@@ -185,7 +185,7 @@ export default function Sales() {
       credit: { label: "Crédito", color: "bg-purple-500/20 text-purple-400" },
       pix: { label: "PIX", color: "bg-primary-500/20 text-primary-400" },
     };
-    
+
     return methods[method] || { label: method, color: "bg-gray-500/20 text-gray-400" };
   };
 
@@ -217,7 +217,9 @@ export default function Sales() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="customer" className="text-gray-300">Cliente (Opcional)</Label>
+                <Label htmlFor="customer" className="text-gray-300">
+                  Cliente (Opcional)
+                </Label>
                 <Input
                   id="customer"
                   placeholder="Nome do cliente"
@@ -227,7 +229,9 @@ export default function Sales() {
                 />
               </div>
               <div>
-                <Label htmlFor="payment" className="text-gray-300">Método de Pagamento</Label>
+                <Label htmlFor="payment" className="text-gray-300">
+                  Método de Pagamento
+                </Label>
                 <Select value={paymentMethod} onValueChange={setPaymentMethod}>
                   <SelectTrigger className="bg-dark-900 border-gray-600 focus:border-primary-400">
                     <SelectValue />
@@ -246,23 +250,29 @@ export default function Sales() {
             <div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
-                  <Label htmlFor="product-select" className="text-gray-300 text-sm mb-2 block">Produto</Label>
+                  <Label htmlFor="product-select" className="text-gray-300 text-sm mb-2 block">
+                    Produto
+                  </Label>
                   <Select value={selectedProductId} onValueChange={setSelectedProductId}>
                     <SelectTrigger id="product-select" className="bg-dark-900 border-gray-600 focus:border-primary-400">
                       <SelectValue placeholder="Selecione um produto" />
                     </SelectTrigger>
                     <SelectContent>
-                      {products?.filter(p => p.stock > 0).map((product) => (
-                        <SelectItem key={product.id} value={product.id.toString()}>
-                          {product.name} - R$ {Number(product.price).toFixed(2)}
-                        </SelectItem>
-                      ))}
+                      {products
+                        ?.filter((p) => p.stock > 0)
+                        .map((product) => (
+                          <SelectItem key={product.id} value={product.id.toString()}>
+                            {product.name} - R$ {Number(product.price).toFixed(2)}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
-                  <Label htmlFor="quantity-input" className="text-gray-300 text-sm mb-2 block">Quantidade</Label>
+                  <Label htmlFor="quantity-input" className="text-gray-300 text-sm mb-2 block">
+                    Quantidade
+                  </Label>
                   <Input
                     id="quantity-input"
                     type="number"
@@ -273,9 +283,11 @@ export default function Sales() {
                     className="bg-dark-900 border-gray-600 focus:border-primary-400"
                   />
                 </div>
-                
+
                 <div>
-                  <Label htmlFor="discount-input" className="text-gray-300 text-sm mb-2 block">Desconto (Opcional)</Label>
+                  <Label htmlFor="discount-input" className="text-gray-300 text-sm mb-2 block">
+                    Desconto (Opcional)
+                  </Label>
                   <Input
                     id="discount-input"
                     type="number"
@@ -288,7 +300,7 @@ export default function Sales() {
                     className="bg-dark-900 border-gray-600 focus:border-primary-400"
                   />
                 </div>
-                
+
                 <div className="flex items-end">
                   <Button
                     type="button"
@@ -310,7 +322,10 @@ export default function Sales() {
               ) : (
                 <div className="space-y-2">
                   {cartItems.map((item) => (
-                    <div key={item.productId} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-dark-800 rounded-lg gap-3">
+                    <div
+                      key={item.productId}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-dark-800 rounded-lg gap-3"
+                    >
                       <div className="flex items-center space-x-3 flex-1">
                         <span className="text-xl">📦</span>
                         <div className="flex-1">
@@ -371,10 +386,7 @@ export default function Sales() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <CardTitle className="text-lg sm:text-xl font-semibold">Histórico de Vendas</CardTitle>
               <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
-                <Input
-                  type="date"
-                  className="bg-dark-900 border-gray-600 focus:border-secondary-400"
-                />
+                <Input type="date" className="bg-dark-900 border-gray-600 focus:border-secondary-400" />
                 <Button className="bg-gradient-to-r from-secondary-400 to-secondary-500 hover:from-secondary-500 hover:to-secondary-600 w-full sm:w-auto">
                   <Download className="w-4 h-4 mr-2" />
                   Exportar
@@ -399,10 +411,11 @@ export default function Sales() {
                   {sales?.map((sale) => {
                     const paymentBadge = getPaymentMethodBadge(sale.paymentMethod);
                     return (
-                      <tr key={sale.id} className="border-b border-gray-800 hover:bg-dark-900/30 transition-colors duration-300">
-                        <td className="py-4 px-4 text-gray-300">
-                          {new Date(sale.createdAt).toLocaleString('pt-BR')}
-                        </td>
+                      <tr
+                        key={sale.id}
+                        className="border-b border-gray-800 hover:bg-dark-900/30 transition-colors duration-300"
+                      >
+                        <td className="py-4 px-4 text-gray-300">{new Date(sale.createdAt).toLocaleString("pt-BR")}</td>
                         <td className="py-4 px-4">{sale.customerName || "Cliente Anônimo"}</td>
                         <td className="py-4 px-4">
                           <div className="flex items-center space-x-2">
@@ -410,27 +423,15 @@ export default function Sales() {
                           </div>
                         </td>
                         <td className="py-4 px-4">
-                          <Badge className={paymentBadge.color}>
-                            {paymentBadge.label}
-                          </Badge>
+                          <Badge className={paymentBadge.color}>{paymentBadge.label}</Badge>
                         </td>
-                        <td className="py-4 px-4 text-accent-400 font-semibold">
-                          R$ {Number(sale.total).toFixed(2)}
-                        </td>
+                        <td className="py-4 px-4 text-accent-400 font-semibold">R$ {Number(sale.total).toFixed(2)}</td>
                         <td className="py-4 px-4">
                           <div className="flex space-x-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-secondary-400 hover:text-secondary-300"
-                            >
+                            <Button variant="ghost" size="sm" className="text-secondary-400 hover:text-secondary-300">
                               <Eye className="w-4 h-4" />
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-primary-400 hover:text-primary-300"
-                            >
+                            <Button variant="ghost" size="sm" className="text-primary-400 hover:text-primary-300">
                               <Printer className="w-4 h-4" />
                             </Button>
                           </div>
@@ -440,7 +441,7 @@ export default function Sales() {
                   })}
                 </tbody>
               </table>
-              
+
               {(!sales || sales.length === 0) && (
                 <div className="text-center py-12">
                   <ShoppingCart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
