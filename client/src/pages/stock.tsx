@@ -16,7 +16,7 @@ export default function Stock() {
   const [movementType, setMovementType] = useState("in");
   const [quantity, setQuantity] = useState("");
   const [reason, setReason] = useState("");
-  
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -29,7 +29,7 @@ export default function Stock() {
   });
 
   const createMovementMutation = useMutation({
-    mutationFn: async (data: { productId: number; type: string; quantity: number; reason?: string }) => {
+    mutationFn: async (data: { productId: string; type: string; quantity: number; reason?: string }) => {
       await apiRequest("POST", "/api/stock-movements", data);
     },
     onSuccess: () => {
@@ -55,7 +55,7 @@ export default function Stock() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!selectedProductId || !quantity) {
       toast({
         title: "Erro",
@@ -66,21 +66,21 @@ export default function Stock() {
     }
 
     createMovementMutation.mutate({
-      productId: parseInt(selectedProductId),
+      productId: selectedProductId,
       type: movementType,
       quantity: parseInt(quantity),
       reason: reason || undefined,
     });
   };
 
-  const getProductName = (productId: number) => {
-    return products?.find(p => p.id === productId)?.name || "Produto não encontrado";
+  const getProductName = (productId: string) => {
+    return products?.find((p) => p.id === productId)?.name || "Produto não encontrado";
   };
 
-  const getCategoryIcon = (productId: number) => {
-    const product = products?.find(p => p.id === productId);
+  const getCategoryIcon = (productId: String) => {
+    const product = products?.find((p) => p.id === productId);
     if (!product) return "📦";
-    
+
     switch (product.category.toLowerCase()) {
       case "eletrônicos":
         return "📱";
@@ -121,7 +121,9 @@ export default function Stock() {
           <CardContent>
             <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <Label htmlFor="product" className="text-gray-300">Produto</Label>
+                <Label htmlFor="product" className="text-gray-300">
+                  Produto
+                </Label>
                 <Select value={selectedProductId} onValueChange={setSelectedProductId}>
                   <SelectTrigger className="bg-dark-900 border-gray-600 focus:border-accent-400">
                     <SelectValue placeholder="Selecione um produto" />
@@ -135,9 +137,11 @@ export default function Stock() {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div>
-                <Label htmlFor="type" className="text-gray-300">Tipo</Label>
+                <Label htmlFor="type" className="text-gray-300">
+                  Tipo
+                </Label>
                 <Select value={movementType} onValueChange={setMovementType}>
                   <SelectTrigger className="bg-dark-900 border-gray-600 focus:border-accent-400">
                     <SelectValue />
@@ -148,9 +152,11 @@ export default function Stock() {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div>
-                <Label htmlFor="quantity" className="text-gray-300">Quantidade</Label>
+                <Label htmlFor="quantity" className="text-gray-300">
+                  Quantidade
+                </Label>
                 <Input
                   id="quantity"
                   type="number"
@@ -161,10 +167,10 @@ export default function Stock() {
                   className="bg-dark-900 border-gray-600 focus:border-accent-400"
                 />
               </div>
-              
+
               <div className="flex items-end">
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full bg-gradient-to-r from-accent-400 to-accent-500 hover:from-accent-500 hover:to-accent-600"
                   disabled={createMovementMutation.isPending}
                 >
@@ -172,10 +178,12 @@ export default function Stock() {
                 </Button>
               </div>
             </form>
-            
+
             {/* Reason field - optional */}
             <div className="mt-4">
-              <Label htmlFor="reason" className="text-gray-300">Motivo (Opcional)</Label>
+              <Label htmlFor="reason" className="text-gray-300">
+                Motivo (Opcional)
+              </Label>
               <Input
                 id="reason"
                 placeholder="Motivo da movimentação"
@@ -214,9 +222,12 @@ export default function Stock() {
                 </thead>
                 <tbody>
                   {stockMovements?.map((movement) => (
-                    <tr key={movement.id} className="border-b border-gray-800 hover:bg-dark-900/30 transition-colors duration-300">
+                    <tr
+                      key={movement.id}
+                      className="border-b border-gray-800 hover:bg-dark-900/30 transition-colors duration-300"
+                    >
                       <td className="py-4 px-4 text-gray-300">
-                        {new Date(movement.createdAt).toLocaleString('pt-BR')}
+                        {new Date(movement.createdAt).toLocaleString("pt-BR")}
                       </td>
                       <td className="py-4 px-4">
                         <div className="flex items-center space-x-3">
@@ -225,15 +236,13 @@ export default function Stock() {
                         </div>
                       </td>
                       <td className="py-4 px-4">
-                        <Badge 
-                          variant={movement.type === 'in' ? 'default' : 'destructive'}
+                        <Badge
+                          variant={movement.type === "in" ? "default" : "destructive"}
                           className={
-                            movement.type === 'in' 
-                              ? 'bg-accent-500/20 text-accent-400' 
-                              : 'bg-red-500/20 text-red-400'
+                            movement.type === "in" ? "bg-accent-500/20 text-accent-400" : "bg-red-500/20 text-red-400"
                           }
                         >
-                          {movement.type === 'in' ? (
+                          {movement.type === "in" ? (
                             <>
                               <TrendingUp className="w-3 h-3 mr-1" />
                               Entrada
@@ -246,23 +255,28 @@ export default function Stock() {
                           )}
                         </Badge>
                       </td>
-                      <td className={`py-4 px-4 font-semibold ${
-                        movement.type === 'in' ? 'text-accent-400' : 'text-red-400'
-                      }`}>
-                        {movement.type === 'in' ? '+' : '-'}{movement.quantity}
+                      <td
+                        className={`py-4 px-4 font-semibold ${
+                          movement.type === "in" ? "text-accent-400" : "text-red-400"
+                        }`}
+                      >
+                        {movement.type === "in" ? "+" : "-"}
+                        {movement.quantity}
                       </td>
                       <td className="py-4 px-4 text-gray-400">{movement.previousStock}</td>
-                      <td className={`py-4 px-4 font-semibold ${
-                        movement.type === 'in' ? 'text-secondary-400' : 'text-yellow-400'
-                      }`}>
+                      <td
+                        className={`py-4 px-4 font-semibold ${
+                          movement.type === "in" ? "text-secondary-400" : "text-yellow-400"
+                        }`}
+                      >
                         {movement.newStock}
                       </td>
-                      <td className="py-4 px-4 text-gray-400">{movement.reason || '-'}</td>
+                      <td className="py-4 px-4 text-gray-400">{movement.reason || "-"}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              
+
               {(!stockMovements || stockMovements.length === 0) && (
                 <div className="text-center py-12">
                   <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
