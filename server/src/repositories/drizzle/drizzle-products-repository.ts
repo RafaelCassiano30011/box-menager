@@ -8,7 +8,7 @@ export class DrizzleProductRepository implements ProductRepository {
     return await drizzle.select().from(products).orderBy(desc(products.createdAt));
   }
 
-  async getProduct(id: number): Promise<Product | undefined> {
+  async getProduct(id: string): Promise<Product | undefined> {
     const result = await drizzle.select().from(products).where(eq(products.id, id));
     return result[0];
   }
@@ -18,12 +18,12 @@ export class DrizzleProductRepository implements ProductRepository {
     return result[0];
   }
 
-  async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
+  async updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined> {
     const result = await drizzle.update(products).set(product).where(eq(products.id, id)).returning();
     return result[0];
   }
 
-  async deleteProduct(id: number): Promise<boolean> {
+  async deleteProduct(id: string): Promise<boolean> {
     await drizzle.delete(products).where(eq(products.id, id));
 
     const product = await this.getProduct(id);
@@ -31,7 +31,7 @@ export class DrizzleProductRepository implements ProductRepository {
     return !product;
   }
 
-  async updateProductStock(id: number, stock: number): Promise<Product | undefined> {
+  async updateProductStock(id: string, stock: number): Promise<Product | undefined> {
     const result = await drizzle.update(products).set({ stock: stock }).where(eq(products.id, id)).returning();
     return result[0];
   }

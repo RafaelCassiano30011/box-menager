@@ -7,10 +7,6 @@ export class GetProductsUseCase {
   async execute(): Promise<Product[] | null> {
     const products = await this.productsRepository.getProducts();
 
-    if (!products) {
-      throw new Error("Failed to fetch products");
-    }
-
     return products;
   }
 }

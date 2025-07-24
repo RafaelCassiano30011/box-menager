@@ -16,7 +16,7 @@ export class DrizzleStockMovementsRepository implements StockMovementRepository 
     return result[0];
   }
 
-  async getProductStockHistory(productId: number): Promise<StockMovement[]> {
+  async getProductStockHistory(productId: string): Promise<StockMovement[]> {
     return await drizzle
       .select()
       .from(stockMovements)

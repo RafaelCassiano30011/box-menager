@@ -24,7 +24,7 @@ export class PostgresStorage implements IStorageRespository {
     return await drizzle.select().from(products).orderBy(desc(products.createdAt));
   }
 
-  async getProduct(id: number): Promise<Product | undefined> {
+  async getProduct(id: string): Promise<Product | undefined> {
     const result = await drizzle.select().from(products).where(eq(products.id, id));
     return result[0];
   }
@@ -34,12 +34,12 @@ export class PostgresStorage implements IStorageRespository {
     return result[0];
   }
 
-  async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
+  async updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined> {
     const result = await drizzle.update(products).set(product).where(eq(products.id, id)).returning();
     return result[0];
   }
 
-  async deleteProduct(id: number): Promise<boolean> {
+  async deleteProduct(id: string): Promise<boolean> {
     await drizzle.delete(products).where(eq(products.id, id));
 
     const product = await this.getProduct(id);
@@ -60,7 +60,7 @@ export class PostgresStorage implements IStorageRespository {
     return result[0];
   }
 
-  async getProductStockHistory(productId: number): Promise<StockMovement[]> {
+  async getProductStockHistory(productId: string): Promise<StockMovement[]> {
     return await drizzle
       .select()
       .from(stockMovements)
@@ -83,7 +83,7 @@ export class PostgresStorage implements IStorageRespository {
     return salesWithItems;
   }
 
-  async getSale(id: number): Promise<SaleWithItems | undefined> {
+  async getSale(id: string): Promise<SaleWithItems | undefined> {
     const saleData = await drizzle.select().from(sales).where(eq(sales.id, id));
     if (!saleData[0]) return undefined;
 
