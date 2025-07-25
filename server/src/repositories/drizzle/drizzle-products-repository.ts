@@ -18,8 +18,8 @@ export class DrizzleProductRepository implements ProductRepository {
     return result[0];
   }
 
-  async updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined> {
-    const result = await drizzle.update(products).set(product).where(eq(products.id, id)).returning();
+  async updateProduct(props: { id: string; product: Partial<InsertProduct> }): Promise<Product | undefined> {
+    const result = await drizzle.update(products).set(props.product).where(eq(products.id, props.id)).returning();
     return result[0];
   }
 
@@ -31,8 +31,12 @@ export class DrizzleProductRepository implements ProductRepository {
     return !product;
   }
 
-  async updateProductStock(id: string, stock: number): Promise<Product | undefined> {
-    const result = await drizzle.update(products).set({ stock: stock }).where(eq(products.id, id)).returning();
+  async updateProductStock(props: { id: string; stock: number }): Promise<Product | undefined> {
+    const result = await drizzle
+      .update(products)
+      .set({ stock: props.stock })
+      .where(eq(products.id, props.id))
+      .returning();
     return result[0];
   }
 }

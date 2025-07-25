@@ -1,5 +1,5 @@
 import { InsertProduct, Product } from "@shared/schema";
-import { ProductRepository } from "../repositories/products-repository";
+import { ProductRepository } from "../../repositories/products-repository";
 
 export class CreateProductUseCase {
   constructor(private readonly productsRepository: ProductRepository) {}

@@ -178,7 +178,9 @@ export default function Products() {
                   </Button>
                 </div>
 
-                <img className="w-full rounded-lg mb-2" src={product.image} alt={product.name} />
+                <div className="w-full h-auto aspect-square bg-gray-300 rounded  mb-2">
+                  <img className="w-full rounded-lg" src={product.image} />
+                </div>
 
                 <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
                 <p className="text-gray-400 text-sm mb-4 line-clamp-2">{product.description}</p>
