@@ -1,6 +1,6 @@
-import { ProductRepository } from "../repositories/products-repository";
+import { ProductRepository } from "../../repositories/products-repository";
 
-export class DeleteProductsUseCase {
+export class DeleteProductUseCase {
   constructor(private readonly productsRepository: ProductRepository) {}
 
   async execute(id: string): Promise<boolean> {
