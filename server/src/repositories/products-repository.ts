@@ -7,9 +7,9 @@ export interface ProductRepository {
 
   createProduct(product: InsertProduct): Promise<Product>;
 
-  updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined>;
+  updateProduct(props: { id: string; product: Partial<InsertProduct> }): Promise<Product | undefined>;
 
   deleteProduct(id: string): Promise<boolean>;
 
-  updateProductStock(id: string, stock: number): Promise<Product | undefined>;
+  updateProductStock(props: { id: string; stock: number }): Promise<Product | undefined>;
 }

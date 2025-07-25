@@ -46,7 +46,7 @@ export async function setupVite(app: FastifyInstance) {
   });
 
   // Use middie to register Vite middlewares
-  await app.use(vite.middlewares);
+  app.use(vite.middlewares);
 
   // Handle all routes with Vite's HTML transformation
   app.get("*", async (request, reply) => {

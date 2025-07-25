@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { DrizzleProductRepository } from "server/src/repositories/drizzle/drizzle-products-repository";
-import { GetProductsUseCase } from "server/src/useCases/get-products-use-case";
+import { GetProductsUseCase } from "server/src/useCases/products/get-products-use-case";
 
 export const getProducts = async (_req: FastifyRequest, res: FastifyReply) => {
   try {
