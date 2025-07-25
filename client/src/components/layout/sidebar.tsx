@@ -24,20 +24,21 @@ export default function Sidebar() {
         <p className="text-gray-400 text-sm mt-1">Controle de Caixa</p>
       </div>
 
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="p-4 space-y-2">
         {navigation.map((item) => {
           const isActive = location === item.href;
           const Icon = item.icon;
-          
+
           return (
             <Link key={item.name} href={item.href}>
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`
                   w-full flex items-center px-4 py-3 rounded-lg transition-all duration-300 text-left
-                  ${isActive
-                    ? "bg-gradient-to-r from-primary-500/20 to-primary-600/10 border border-primary-500/30 text-primary-400"
-                    : "hover:bg-gradient-to-r hover:from-secondary-400/20 hover:to-secondary-500/10 hover:border hover:border-secondary-400/30 text-gray-300 hover:text-secondary-400"
+                  ${
+                    isActive
+                      ? "bg-gradient-to-r from-primary-500/20 to-primary-600/10 border border-primary-500/30 text-primary-400"
+                      : "hover:bg-gradient-to-r hover:from-secondary-400/20 hover:to-secondary-500/10 hover:border hover:border-secondary-400/30 text-gray-300 hover:text-secondary-400"
                   }
                 `}
               >
@@ -79,22 +80,24 @@ export default function Sidebar() {
 
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 bg-dark-800 border-r border-primary-500/20 flex-col">
+      <aside className="hidden lg:flex w-64 bg-dark-800 border-r border-primary-500/20 flex-col min-h-screen">
         <SidebarContent />
       </aside>
 
       {/* Mobile Sidebar */}
-      <aside className={`
+      <aside
+        className={`
         lg:hidden fixed left-0 top-0 h-full w-72 sm:w-80 max-w-sm bg-dark-800 border-r border-primary-500/20 flex flex-col z-50 transform transition-transform duration-300 shadow-2xl
-        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
+        ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
+      `}
+      >
         <SidebarContent />
       </aside>
     </>

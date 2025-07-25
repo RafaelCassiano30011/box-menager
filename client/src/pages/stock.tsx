@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Package, TrendingUp, TrendingDown, Download } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,15 +10,26 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { Product, StockMovement } from "@shared/schema";
+import { useLocation } from "wouter";
 
 export default function Stock() {
   const [selectedProductId, setSelectedProductId] = useState("");
   const [movementType, setMovementType] = useState("in");
   const [quantity, setQuantity] = useState("");
   const [reason, setReason] = useState("");
+  const [location] = useLocation();
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("productID");
+
+    if (productId) {
+      setSelectedProductId(productId);
+    }
+  }, [location]);
 
   const { data: products } = useQuery<Product[]>({
     queryKey: ["/api/products"],

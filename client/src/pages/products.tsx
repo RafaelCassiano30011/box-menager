@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import ProductModal from "@/components/modals/product-modal";
 import { apiRequest } from "@/lib/queryClient";
 import type { Product } from "@shared/schema";
+import { Link } from "wouter";
 
 export default function Products() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -188,7 +189,9 @@ export default function Products() {
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Preço:</span>
-                    <span className="font-semibold text-accent-400">R$ {Number(product.price).toFixed(2)}</span>
+                    <span className="font-semibold text-accent-400">
+                      R$ {Number(product.price).toLocaleString("BRL")}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Estoque:</span>
@@ -219,18 +222,22 @@ export default function Products() {
                 <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                   <Button
                     size="sm"
-                    className="flex-1 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700"
+                    className="flex-1 max-w-1/2 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700"
                   >
-                    <Package2 className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Ajustar</span>
+                    <Link className={"flex items-center"} href={`/stock?productID=${product.id}`}>
+                      <Package2 className="w-4 h-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Ajustar</span>
+                    </Link>
                   </Button>
                   <Button
                     size="sm"
                     className="flex-1 bg-gradient-to-r from-accent-400 to-accent-500 hover:from-accent-500 hover:to-accent-600"
                     disabled={product.stock === 0}
                   >
-                    <ShoppingCart className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Vender</span>
+                    <Link className={"flex items-center"} href={`/sales?productID=${product.id}`}>
+                      <ShoppingCart className="w-4 h-4 sm:mr-2" />
+                      <span className="hidden sm:inline">Vender</span>
+                    </Link>
                   </Button>
                 </div>
               </CardContent>

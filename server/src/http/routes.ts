@@ -1,9 +1,9 @@
 import { storage } from "../postgres-storage";
-import { insertProductSchema } from "@shared/schema";
-import { z } from "zod";
 import { getProducts } from "./controller/get-products-controller";
 import { createProduct } from "./controller/create-product-controller";
 import { FastifyInstance } from "fastify";
+import { updateProduct } from "./controller/update-product-controller";
+import { deleteProduct } from "./controller/delete-product-controller";
 
 export async function appRoutes(app: FastifyInstance) {
   // Products routes
@@ -11,43 +11,9 @@ export async function appRoutes(app: FastifyInstance) {
 
   app.post("/api/products", createProduct);
 
-  app.put("/api/products/:id", async (req, res) => {
-    try {
-      const { id } = req.params as { id: string };
-      const productData = insertProductSchema.parse(req.body);
+  app.put("/api/products/:id", updateProduct);
 
-      const product = await storage.updateProduct(id, productData);
-
-      if (!product) {
-        res.status(404).send({ message: "Product not found" });
-        return;
-      }
-
-      res.send(product);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).send({ message: "Invalid product data", errors: error.errors });
-      } else {
-        res.status(500).send({ message: "Failed to update product" });
-      }
-    }
-  });
-
-  app.delete("/api/products/:id", async (req, res) => {
-    try {
-      const { id } = req.params as { id: string };
-      const deleted = await storage.deleteProduct(id);
-
-      if (!deleted) {
-        res.status(404).send({ message: "Product not found" });
-        return;
-      }
-
-      res.status(204).send();
-    } catch (error) {
-      res.status(500).send({ message: "Failed to delete product" });
-    }
-  });
+  app.delete("/api/products/:id", deleteProduct);
 
   // Stock movements routes
   app.get("/api/stock-movements", async (req, res) => {

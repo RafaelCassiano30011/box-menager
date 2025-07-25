@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Minus, ShoppingCart, Eye, Printer, Download } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { Product, SaleWithItems } from "@shared/schema";
+import { useLocation } from "wouter";
 
 interface SaleItem {
   productId: string;
@@ -27,9 +28,19 @@ export default function Sales() {
   const [selectedQuantity, setSelectedQuantity] = useState("1");
   const [selectedDiscount, setSelectedDiscount] = useState("0");
   const [cartItems, setCartItems] = useState<SaleItem[]>([]);
+  const [location] = useLocation();
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("productID");
+
+    if (productId) {
+      setSelectedProductId(productId);
+    }
+  }, [location]);
 
   const { data: products } = useQuery<Product[]>({
     queryKey: ["/api/products"],
@@ -262,7 +273,7 @@ export default function Sales() {
                         ?.filter((p) => p.stock > 0)
                         .map((product) => (
                           <SelectItem key={product.id} value={product.id.toString()}>
-                            {product.name} - R$ {Number(product.price).toFixed(2)}
+                            {product.name} - R$ {Number(product.price).toLocaleString("BRL")}
                           </SelectItem>
                         ))}
                     </SelectContent>
@@ -331,7 +342,7 @@ export default function Sales() {
                         <div className="flex-1">
                           <p className="font-medium">{item.productName}</p>
                           <p className="text-gray-400 text-sm">
-                            {item.quantity}x unidades - R$ {item.unitPrice.toFixed(2)} cada
+                            {item.quantity}x unidades - R$ {Number(item.unitPrice).toLocaleString("BRL")} cada
                             {item.discount > 0 && ` (${item.discount}% desc.)`}
                           </p>
                         </div>
