@@ -21,7 +21,7 @@ export async function appRoutes(app: FastifyInstance) {
       const movements = await storage.getStockMovements();
       res.send(movements);
     } catch (error) {
-      res.status(500).send({ message: "Failed to fetch stock movements" });
+      res.status(500).send({ message: `Failed to fetch stock movements ${error.message}` });
     }
   });
 
@@ -118,7 +118,7 @@ export async function appRoutes(app: FastifyInstance) {
       const sale = await storage.createSale(saleData, saleItems);
       res.status(201).send(sale);
     } catch (error) {
-      res.status(500).send({ message: "Failed to create sale" });
+         res.status(500).send({ message: `Failed to fetch stock movements ${error.message}` });
     }
   });
 

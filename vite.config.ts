@@ -11,6 +11,7 @@ export default defineConfig({
       "@assets": path.resolve(import.meta.dirname, "attached_assets"),
     },
   },
+
   root: path.resolve(import.meta.dirname, "client"),
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
@@ -20,6 +21,13 @@ export default defineConfig({
     fs: {
       strict: true,
       deny: ["**/.*"],
+    },
+    proxy: {
+      "/api": {
+        target: "https://box-menager.onrender.com/api", // backend server
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""), // optional
+      },
     },
   },
 });

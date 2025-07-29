@@ -20,6 +20,33 @@ import {
 import { IStorageRespository } from "./repositories/storage";
 
 export class PostgresStorage implements IStorageRespository {
+  async getProducts(): Promise<Product[]> {
+    return await drizzle.select().from(products).orderBy(desc(products.createdAt));
+  }
+
+  async getProduct(id: number): Promise<Product | undefined> {
+    const result = await drizzle.select().from(products).where(eq(products.id, id));
+    return result[0];
+  }
+
+  async createProduct(product: InsertProduct): Promise<Product> {
+    const result = await drizzle.insert(products).values(product).returning();
+    return result[0];
+  }
+
+  async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
+    const result = await drizzle.update(products).set(product).where(eq(products.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteProduct(id: number): Promise<boolean> {
+    await drizzle.delete(products).where(eq(products.id, id));
+
+    const product = await this.getProduct(id);
+
+    return !product;
+  }
+
   async getStockMovements(): Promise<StockMovement[]> {
     return await drizzle.select().from(stockMovements).orderBy(desc(stockMovements.createdAt));
   }
@@ -33,7 +60,7 @@ export class PostgresStorage implements IStorageRespository {
     return result[0];
   }
 
-  async getProductStockHistory(productId: string): Promise<StockMovement[]> {
+  async getProductStockHistory(productId: number): Promise<StockMovement[]> {
     return await drizzle
       .select()
       .from(stockMovements)
@@ -56,7 +83,7 @@ export class PostgresStorage implements IStorageRespository {
     return salesWithItems;
   }
 
-  async getSale(id: string): Promise<SaleWithItems | undefined> {
+  async getSale(id: number): Promise<SaleWithItems | undefined> {
     const saleData = await drizzle.select().from(sales).where(eq(sales.id, id));
     if (!saleData[0]) return undefined;
 
