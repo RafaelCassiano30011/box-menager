@@ -4,6 +4,7 @@ import { env } from "./env";
 import { serveStatic, setupVite } from "./vite";
 import { appRoutes } from "./http/routes";
 import { ZodError } from "zod";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 const app = Fastify({ logger: false });
 
@@ -23,24 +24,16 @@ app.setErrorHandler((error, _, reply) => {
   return reply.status(500).send({ message: "Internal server error." });
 });
 
-async function start() {
-  try {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (!isReady) {
     if (env.NODE_ENV === "development") {
       await setupVite(app);
     } else {
       await serveStatic(app);
     }
-
-    await app.listen({
-      host: "0.0.0.0",
-      port: env.PORT || 3000,
-    });
-
-    console.log("🚀 HTTP Server Running on port", env.PORT || 3000);
-  } catch (error) {
-    app.log.error(error);
-    process.exit(1);
+    await app.ready();
+    isReady = true;
   }
-}
 
-start();
+  app.server.emit("request", req, res);
+}
