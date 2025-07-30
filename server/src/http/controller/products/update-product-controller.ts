@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { insertProductSchema } from "@shared/schema";
 import { DrizzleProductRepository } from "server/src/repositories/drizzle/drizzle-products-repository";
-import { UpdateProductUseCase } from "server/src/useCases/products/update-product-use-case";
+import { UpdateProductUseCase } from "server/src/useCases/product/update-product-use-case";
 
 export const updateProduct = async (req: FastifyRequest, res: FastifyReply) => {
   try {

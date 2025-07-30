@@ -169,6 +169,19 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
           </div>
 
           <div>
+            <Label htmlFor="image" className="text-gray-300">
+              Imagem do Produto
+            </Label>
+            <Input
+              id="image"
+              type="file"
+              {...register("image")}
+              className="bg-dark-900 border-gray-600 focus:border-secondary-400"
+            />
+            {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>}
+          </div>
+
+          <div>
             <Label htmlFor="description" className="text-gray-300">
               Descrição
             </Label>

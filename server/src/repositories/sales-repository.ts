@@ -5,5 +5,5 @@ export interface SalesRepository {
 
   getSale(id: string): Promise<SaleWithItems | undefined>;
 
-  createSale(sale: InsertSale, items: InsertSaleItem[]): Promise<SaleWithItems>;
+  createSale(props: { sale: InsertSale; items: Omit<InsertSaleItem, "saleId">[] }): Promise<SaleWithItems>;
 }

@@ -430,7 +430,9 @@ export default function Sales() {
                         <td className="py-4 px-4">{sale.customerName || "Cliente Anônimo"}</td>
                         <td className="py-4 px-4">
                           <div className="flex items-center space-x-2">
-                            <span className="text-sm">{sale.items.length}x produtos</span>
+                            <span className="text-sm">
+                              {sale.items.reduce((quantity, item) => (quantity += item.quantity), 0)}x produtos
+                            </span>
                           </div>
                         </td>
                         <td className="py-4 px-4">
