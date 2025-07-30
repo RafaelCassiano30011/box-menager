@@ -1,7 +1,7 @@
 import { errorCodes, FastifyReply, FastifyRequest } from "fastify";
 import { insertProductSchema } from "@shared/schema";
 import { DrizzleProductRepository } from "server/src/repositories/drizzle/drizzle-products-repository";
-import { CreateProductUseCase } from "server/src/useCases/products/create-product-use-case";
+import { CreateProductUseCase } from "server/src/useCases/product/create-product-use-case";
 
 export const createProduct = async (req: FastifyRequest, res: FastifyReply) => {
   try {

@@ -4,12 +4,16 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const categories = pgTable("categories", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   name: text("name").notNull().unique(),
 });
 
 export const products = pgTable("products", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
   image: text("image").notNull(),
   description: text("description"),
@@ -21,7 +25,9 @@ export const products = pgTable("products", {
 });
 
 export const stockMovements = pgTable("stock_movements", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   productId: uuid("product_id").notNull(),
   type: text("type").notNull(), // 'in' or 'out'
   quantity: integer("quantity").notNull(),
@@ -32,7 +38,9 @@ export const stockMovements = pgTable("stock_movements", {
 });
 
 export const sales = pgTable("sales", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   customerName: text("customer_name"),
   paymentMethod: text("payment_method").notNull(),
   total: decimal("total", { precision: 10, scale: 2 }).notNull(),
@@ -40,7 +48,9 @@ export const sales = pgTable("sales", {
 });
 
 export const saleItems = pgTable("sale_items", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   saleId: uuid("sale_id").notNull(),
   productId: uuid("product_id").notNull(),
   productName: text("product_name").notNull(),

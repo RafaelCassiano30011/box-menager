@@ -1,0 +1,23 @@
+{
+  "customerName": "João Silva",
+  "paymentMethod": "PIX",
+  "total": "199.90",
+  "items": [
+    {
+      "productId": "550e8400-e29b-41d4-a716-446655440000",
+      "productName": "Smartphone XYZ Pro",
+      "quantity": 1,
+      "unitPrice": "899.00",
+      "discount": "0.00",
+      "subtotal": "899.00"
+    },
+    {
+      "productId": "550e8400-e29b-41d4-a716-446655440001",
+      "productName": "Fone Bluetooth Elite",
+      "quantity": 2,
+      "unitPrice": "199.00",
+      "discount": "5.00",
+      "subtotal": "393.00"
+    }
+  ]
+}

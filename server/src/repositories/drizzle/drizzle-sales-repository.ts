@@ -18,6 +18,8 @@ export class DrizzleSalesRepository implements SalesRepository {
       });
     }
 
+    console.log(salesWithItems[0].items);
+
     return salesWithItems;
   }
 
@@ -33,7 +35,13 @@ export class DrizzleSalesRepository implements SalesRepository {
     };
   }
 
-  async createSale(sale: InsertSale, items: InsertSaleItem[]): Promise<SaleWithItems> {
+  async createSale({
+    sale,
+    items,
+  }: {
+    sale: InsertSale;
+    items: Omit<InsertSaleItem, "saleId">[];
+  }): Promise<SaleWithItems> {
     return await drizzle.transaction(async (tx) => {
       // Create sale
       const [saleResult] = await tx.insert(sales).values(sale).returning();
@@ -47,28 +55,6 @@ export class DrizzleSalesRepository implements SalesRepository {
           .values({ ...item, saleId: saleResult.id })
           .returning();
         saleItemsResults.push(saleItemResult);
-
-        // Get current product stock
-        // TODO USECASE
-        //const [product] = await tx.select().from(products).where(eq(products.id, item.productId));
-
-        //if (product) {
-        //  const previousStock = product.stock;
-        //  const newStock = previousStock - item.quantity;
-
-        //  // Update product stock
-        //  await tx.update(products).set({ stock: newStock }).where(eq(products.id, item.productId));
-
-        //  // Create stock movement
-        //  await tx.insert(stockMovements).values({
-        //    productId: item.productId,
-        //    type: "out",
-        //    quantity: item.quantity,
-        //    previousStock,
-        //    newStock,
-        //    reason: "Venda",
-        //  });
-        //}
       }
 
       return {

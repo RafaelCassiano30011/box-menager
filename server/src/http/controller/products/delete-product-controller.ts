@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { DrizzleProductRepository } from "server/src/repositories/drizzle/drizzle-products-repository";
-import { DeleteProductUseCase } from "server/src/useCases/products/delete-product-use-case";
+import { DeleteProductUseCase } from "server/src/useCases/product/delete-product-use-case";
 
 export const deleteProduct = async (req: FastifyRequest, res: FastifyReply) => {
   try {
