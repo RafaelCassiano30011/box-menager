@@ -22,8 +22,6 @@ Um sistema moderno de gerenciamento de inventário e vendas construído com Reac
 
 - Static Page usando Vite com Fastify
 
-- Autenticação JWT
-
 ## Como subir o projeto
 
 ### Pré-requisitos
