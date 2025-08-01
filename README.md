@@ -169,6 +169,16 @@ PORT="5000"
 - Upload de imagens usando cloudinary
 
 - Utilizar Alguns principíos do SOLID
+  
+  - Manutenibilidade: Mudanças isoladas em cada camada
+
+  - Testabilidade: Fácil de mockar repositórios para testes unitários
+
+  - Extensibilidade: Novas implementações sem quebrar código existente
+
+  - Reutilização: Use Cases podem usar diferentes repositórios
+
+  - Separação de responsabilidades: Cada classe tem um propósito específico
 
 - Separação de Camada do banco de dados e Camada do servidor http
 
@@ -176,16 +186,3 @@ PORT="5000"
 
 - Autenticação JWT
 
-
-
-## 🤝 Contribuindo
-
-1. Fork o projeto
-2. Crie uma branch para sua feature
-3. Faça commit das mudanças
-4. Faça push para a branch
-5. Abra um Pull Request
-
-## 📄 Licença
-
-MIT License - veja o arquivo LICENSE para detalhes.
