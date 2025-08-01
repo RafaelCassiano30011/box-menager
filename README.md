@@ -161,12 +161,6 @@ npm run db:push
 npm run db:seed
 ```
 
-### Debugging
-
-- Logs detalhados no console
-- Source maps habilitados
-- Hot reload ativo
-
 ## Deploy
 
 ### Build de produção
@@ -182,4 +176,6 @@ npm start
 DATABASE_URL="sua_connection_string_producao"
 NODE_ENV="production"
 PORT="5000"
+VITE_CLOUD_NAME="CLOUD_NAME_Cloudinary"
+VITE_CLOUD_PRESETS="Cloudinary_PRESETS"
 ```
