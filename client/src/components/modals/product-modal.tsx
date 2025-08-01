@@ -1,12 +1,10 @@
 import { useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertProductSchema } from "@shared/schema";
@@ -14,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { Product, InsertProduct } from "@shared/schema";
 import { z } from "zod";
+import { uploadImage } from "@/services/uploadImage";
 
 const formSchema = insertProductSchema.extend({
   price: z.string().min(1, "Preço é obrigatório"),
@@ -175,8 +174,32 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
             <Input
               id="image"
               type="file"
-              {...register("image")}
-              className="bg-dark-900 border-gray-600 focus:border-secondary-400"
+              multiple={false}
+              accept="image/png, image/jpeg, image/jpg"
+              placeholder="Selecione uma imagem"
+              className="bg-dark-900 border-gray-600 focus:border-secondary-400 cursor-pointer"
+              onInput={async (e) => {
+                console.log("arroz");
+                const fileList = e.currentTarget.files;
+
+                if (fileList && fileList.length > 0) {
+                  const file = fileList[0];
+
+                  const { error, secure_url } = await uploadImage(file);
+
+                  if (error) {
+                    toast({
+                      title: "Erro ao fazer upload da imagem",
+                      description: error,
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+
+                  console.log(secure_url);
+                  setValue("image", secure_url);
+                }
+              }}
             />
             {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>}
           </div>
