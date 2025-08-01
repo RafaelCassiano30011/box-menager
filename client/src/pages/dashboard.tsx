@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import SalesChart from "@/components/charts/sales-chart";
 import type { DashboardMetrics, ProductWithStock, SaleWithItems } from "@shared/schema";
+import { formatPrice } from "@/lib/utils";
 
 export default function Dashboard() {
   const { data: metrics, isLoading: metricsLoading } = useQuery<DashboardMetrics>({
@@ -59,7 +60,9 @@ export default function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">Vendas Hoje</p>
-                  <p className="text-2xl font-bold text-primary-400">R$ {metrics?.todaySales.toFixed(2) || "0,00"}</p>
+                  <p className="text-2xl font-bold text-primary-400">
+                    {formatPrice(Number(metrics?.todaySales || 0))}
+                  </p>
                 </div>
                 <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg flex items-center justify-center">
                   <DollarSign className="text-white" />

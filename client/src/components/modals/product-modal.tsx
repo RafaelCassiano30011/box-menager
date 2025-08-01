@@ -187,7 +187,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
 
                   const { error, secure_url } = await uploadImage(file);
 
-                  if (error) {
+                  if (error || !secure_url) {
                     toast({
                       title: "Erro ao fazer upload da imagem",
                       description: error,
@@ -196,7 +196,6 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
                     return;
                   }
 
-                  console.log(secure_url);
                   setValue("image", secure_url);
                 }
               }}
