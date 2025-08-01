@@ -2,6 +2,28 @@
 
 Um sistema moderno de gerenciamento de inventário e vendas construído com React, Express e PostgreSQL.
 
+## 📝 O que eu aprendi nesse projeto
+
+- Upload de imagens usando cloudinary
+
+- Utilizar Alguns principíos do SOLID
+
+  - Manutenibilidade: Mudanças isoladas em cada camada
+
+  - Testabilidade: Fácil de mockar repositórios para testes unitários
+
+  - Extensibilidade: Novas implementações sem quebrar código existente
+
+  - Reutilização: Use Cases podem usar diferentes repositórios
+
+  - Separação de responsabilidades: Cada classe tem um propósito específico
+
+- Separação de Camada do banco de dados e Camada do servidor http
+
+- Static Page usando Vite com Fastify
+
+- Autenticação JWT
+
 ## 🚀 Como subir o projeto
 
 ### Pré-requisitos
@@ -163,26 +185,3 @@ DATABASE_URL="sua_connection_string_producao"
 NODE_ENV="production"
 PORT="5000"
 ```
-
-## 📝 O que eu aprendi nesse projeto
-
-- Upload de imagens usando cloudinary
-
-- Utilizar Alguns principíos do SOLID
-  
-  - Manutenibilidade: Mudanças isoladas em cada camada
-
-  - Testabilidade: Fácil de mockar repositórios para testes unitários
-
-  - Extensibilidade: Novas implementações sem quebrar código existente
-
-  - Reutilização: Use Cases podem usar diferentes repositórios
-
-  - Separação de responsabilidades: Cada classe tem um propósito específico
-
-- Separação de Camada do banco de dados e Camada do servidor http
-
-- Static Page usando Vite com Fastify
-
-- Autenticação JWT
-
