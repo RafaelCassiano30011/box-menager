@@ -1,8 +1,8 @@
-# 📦 CashFlow Pro - Sistema de Gestão de Estoque e Vendas
+# CashFlow Pro - Sistema de Gestão de Estoque e Vendas
 
 Um sistema moderno de gerenciamento de inventário e vendas construído com React, Express e PostgreSQL.
 
-## 📝 O que eu aprendi nesse projeto
+## O que aprendi com este projeto
 
 - Upload de imagens usando cloudinary
 
@@ -24,7 +24,7 @@ Um sistema moderno de gerenciamento de inventário e vendas construído com Reac
 
 - Autenticação JWT
 
-## 🚀 Como subir o projeto
+## Como subir o projeto
 
 ### Pré-requisitos
 
@@ -90,7 +90,7 @@ npm run dev
 
 A aplicação estará disponível em: `http://localhost:5000`
 
-## 🛠️ Tecnologias utilizadas
+## Tecnologias utilizadas
 
 ### Frontend
 
