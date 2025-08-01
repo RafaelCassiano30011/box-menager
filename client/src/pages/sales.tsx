@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { Product, SaleWithItems } from "@shared/schema";
 import { useLocation } from "wouter";
+import { formatPrice } from "@/lib/utils";
 
 interface SaleItem {
   productId: string;
@@ -273,7 +274,7 @@ export default function Sales() {
                         ?.filter((p) => p.stock > 0)
                         .map((product) => (
                           <SelectItem key={product.id} value={product.id.toString()}>
-                            {product.name} - R$ {Number(product.price).toLocaleString("BRL")}
+                            {product.name} - R$ {formatPrice(Number(product.price))}
                           </SelectItem>
                         ))}
                     </SelectContent>
@@ -342,7 +343,7 @@ export default function Sales() {
                         <div className="flex-1">
                           <p className="font-medium">{item.productName}</p>
                           <p className="text-gray-400 text-sm">
-                            {item.quantity}x unidades - R$ {Number(item.unitPrice).toLocaleString("BRL")} cada
+                            {item.quantity}x unidades - {formatPrice(Number(item.unitPrice))} cada
                             {item.discount > 0 && ` (${item.discount}% desc.)`}
                           </p>
                         </div>

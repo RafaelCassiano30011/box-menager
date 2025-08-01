@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import type { SaleWithItems } from "@shared/schema";
+import { formatPrice } from "@/lib/utils";
 
 interface ChartData {
   date: string;
@@ -75,7 +76,7 @@ export default function SalesChart() {
           <p className="text-gray-300 mb-2">{label}</p>
           <div className="space-y-1">
             <p className="text-primary-400 font-semibold">Vendas: {payload[0].value}</p>
-            <p className="text-accent-400 font-semibold">Receita: R$ {payload[1]?.value?.toFixed(2) || "0,00"}</p>
+            <p className="text-accent-400 font-semibold">Receita: {formatPrice(Number(payload[1].value ?? 0))}</p>
           </div>
         </div>
       );

@@ -11,6 +11,7 @@ import ProductModal from "@/components/modals/product-modal";
 import { apiRequest } from "@/lib/queryClient";
 import type { Product } from "@shared/schema";
 import { Link } from "wouter";
+import { formatPrice } from "@/lib/utils";
 
 export default function Products() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -189,9 +190,7 @@ export default function Products() {
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Preço:</span>
-                    <span className="font-semibold text-accent-400">
-                      R$ {Number(product.price).toLocaleString("BRL")}
-                    </span>
+                    <span className="font-semibold text-accent-400">{formatPrice(Number(product.price || 0))}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Estoque:</span>
