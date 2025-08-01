@@ -111,7 +111,7 @@ A aplicação estará disponível em: `http://localhost:5000`
 - **Drizzle ORM** para queries type-safe
 - **Migrations** automáticas
 
-## 📊 Funcionalidades
+## Funcionalidades
 
 ### Dashboard
 
