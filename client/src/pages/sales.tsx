@@ -12,6 +12,7 @@ import { apiRequest } from "@/lib/queryClient";
 import type { Product, SaleWithItems } from "@shared/schema";
 import { useLocation } from "wouter";
 import { formatPrice } from "@/lib/utils";
+import { generateReceiptPDF } from "@/lib/pdf-generator";
 
 interface SaleItem {
   productId: string;
@@ -26,6 +27,7 @@ export default function Sales() {
   const [customerName, setCustomerName] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [selectedProductId, setSelectedProductId] = useState("");
+  const [getSaleId, setGetSaleId] = useState("");
   const [selectedQuantity, setSelectedQuantity] = useState("1");
   const [selectedDiscount, setSelectedDiscount] = useState("0");
   const [cartItems, setCartItems] = useState<SaleItem[]>([]);
@@ -49,6 +51,15 @@ export default function Sales() {
 
   const { data: sales, isLoading } = useQuery<SaleWithItems[]>({
     queryKey: ["/api/sales"],
+  });
+
+  const { data: salesItem, refetch: refetchSaleItem } = useQuery<SaleWithItems>({
+    queryKey: ["/api/sale", getSaleId], // depende do ID
+    queryFn: async () => {
+      const res = await apiRequest("GET", `/api/sale/${getSaleId}`);
+      return (await res.json()) as SaleWithItems;
+    },
+    enabled: false, // só executa no clique
   });
 
   const createSaleMutation = useMutation({
@@ -200,6 +211,16 @@ export default function Sales() {
 
     return methods[method] || { label: method, color: "bg-gray-500/20 text-gray-400" };
   };
+
+  useEffect(() => {
+    if (salesItem) generateReceiptPDF(salesItem);
+  }, [salesItem]);
+
+  useEffect(() => {
+    if (getSaleId) {
+      refetchSaleItem();
+    }
+  }, [getSaleId, refetchSaleItem]);
 
   if (isLoading) {
     return (
@@ -445,7 +466,14 @@ export default function Sales() {
                             <Button variant="ghost" size="sm" className="text-secondary-400 hover:text-secondary-300">
                               <Eye className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="sm" className="text-primary-400 hover:text-primary-300">
+                            <Button
+                              onClick={() => {
+                                setGetSaleId(sale.id);
+                              }}
+                              variant="ghost"
+                              size="sm"
+                              className="text-primary-400 hover:text-primary-300"
+                            >
                               <Printer className="w-4 h-4" />
                             </Button>
                           </div>

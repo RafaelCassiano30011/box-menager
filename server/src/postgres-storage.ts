@@ -83,7 +83,7 @@ export class PostgresStorage implements IStorageRespository {
     return salesWithItems;
   }
 
-  async getSale(id: number): Promise<SaleWithItems | undefined> {
+  async getSale(id: string): Promise<SaleWithItems | undefined> {
     const saleData = await drizzle.select().from(sales).where(eq(sales.id, id));
     if (!saleData[0]) return undefined;
 
