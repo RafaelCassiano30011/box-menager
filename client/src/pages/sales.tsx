@@ -213,7 +213,10 @@ export default function Sales() {
   };
 
   useEffect(() => {
-    if (salesItem) generateReceiptPDF(salesItem);
+    if (salesItem) {
+      generateReceiptPDF(salesItem);
+      setGetSaleId("");
+    }
   }, [salesItem]);
 
   useEffect(() => {
