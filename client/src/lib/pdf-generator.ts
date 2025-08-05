@@ -12,7 +12,7 @@ interface ReportData {
   topProducts: Array<Product & { totalSold: number; totalRevenue: number }>;
 }
 
-const nameStore = "CashFlow Pro";
+const nameStore = "L'amourshoes";
 
 export async function generatePDFReport(data: ReportData): Promise<void> {
   // Create HTML content for the PDF
@@ -347,8 +347,8 @@ export async function generateReceiptPDF(sale: SaleWithItems): Promise<void> {
   iframe.style.position = "fixed";
   iframe.style.top = "-9999px";
   iframe.style.left = "-9999px";
-  iframe.style.width = "210mm";
-  iframe.style.height = "297mm";
+  iframe.style.width = "80mm";
+  iframe.style.height = "auto";
   document.body.appendChild(iframe);
 
   const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
@@ -374,7 +374,12 @@ function generateReceiptHTML(sale: SaleWithItems): string {
   const time = new Date(sale.createdAt).toLocaleTimeString("pt-BR");
   const paymentLabel = getPaymentMethodLabel(sale.paymentMethod);
 
-  return `
+  // Calcular valores
+  const subtotal = sale.items.reduce((sum, item) => sum + Number(item.subtotal), 0);
+  const totalDiscounts = sale.items.reduce((sum, item) => sum + Number(item.discount || 0), 0);
+  const total = Number(sale.total);
+
+  return /* html */ `
     <!DOCTYPE html>
     <html lang="pt-BR">
     <head>
@@ -388,297 +393,190 @@ function generateReceiptHTML(sale: SaleWithItems): string {
         }
 
         body {
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          line-height: 1.5;
-          color: #1f2937;
-          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-          padding: 40px 20px;
-          min-height: 100vh;
-        }
-
-        .receipt-container {
-          max-width: 500px;
-          margin: 0 auto;
+          font-family: 'Courier New', monospace;
+          line-height: 1.3;
+          color: #000;
           background: white;
-          border-radius: 16px;
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-          overflow: hidden;
-          position: relative;
+          padding: 8px;
+          max-width: 300px;
+          margin: 0 auto;
+          font-size: 11px;
         }
 
-        .receipt-header {
-          background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-          color: white;
+        .receipt {
+          border: 1px solid #000;
+          padding: 12px;
+          background: white;
+        }
+
+        .store-name {
           text-align: center;
-          padding: 32px 24px;
-          position: relative;
-        }
-
-        .receipt-header::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.15"/><circle cx="20" cy="60" r="0.5" fill="%23ffffff" opacity="0.15"/><circle cx="80" cy="30" r="0.5" fill="%23ffffff" opacity="0.15"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-        }
-
-        .receipt-header h1 {
-          font-size: 28px;
-          font-weight: 700;
-          margin-bottom: 8px;
-          position: relative;
-          z-index: 1;
-        }
-
-        .receipt-header h2 {
           font-size: 16px;
-          font-weight: 400;
-          opacity: 0.9;
-          position: relative;
-          z-index: 1;
+          font-weight: bold;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 12px;
+          border-bottom: 1px solid #000;
+          padding-bottom: 6px;
         }
 
-        .receipt-body {
-          padding: 32px 24px;
-        }
-
-        .receipt-info {
-          background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-          padding: 20px;
-          border-radius: 12px;
-          margin-bottom: 24px;
-          border-left: 4px solid #8b5cf6;
-        }
-
-        .receipt-info p {
-          margin-bottom: 8px;
-          font-size: 14px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .receipt-info strong {
-          color: #374151;
-          font-weight: 600;
-        }
-
-        .receipt-info span {
-          color: #6b7280;
+        .purchase-date {
+          text-align: center;
+          font-size: 10px;
+          margin-bottom: 12px;
+          border-bottom: 1px dotted #000;
+          padding-bottom: 6px;
         }
 
         .items-section {
-          margin-bottom: 24px;
+          margin-bottom: 12px;
         }
 
-        .items-header {
-          background: #f8fafc;
-          padding: 16px 0;
-          border-radius: 8px 8px 0 0;
-          margin-bottom: 0;
+        .item {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 4px;
+          font-size: 10px;
+          border-bottom: 1px dotted #000;
+          padding-bottom: 2px;
         }
 
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          font-size: 14px;
-          border-radius: 8px;
-          overflow: hidden;
-          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        .item-details {
+          flex: 1;
         }
 
-        th {
-          background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-          color: white;
-          padding: 16px 12px;
-          text-align: left;
-          font-weight: 600;
-          font-size: 13px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-
-        td {
-          padding: 16px 12px;
-          border-bottom: 1px solid #e5e7eb;
-          background: white;
-        }
-
-        tr:nth-child(even) td {
-          background: #f9fafb;
-        }
-
-        tr:last-child td {
-          border-bottom: none;
+        .item-qty {
+          font-weight: bold;
+          margin-right: 5px;
         }
 
         .item-name {
-          font-weight: 600;
-          color: #374151;
+          font-weight: bold;
         }
 
-        .item-quantity {
-          text-align: center;
-          font-weight: 600;
-          color: #8b5cf6;
-        }
-
-        .item-price {
+        .item-value {
+          font-weight: bold;
           text-align: right;
-          font-family: 'Courier New', monospace;
-          color: #059669;
-          font-weight: 600;
+          min-width: 60px;
         }
 
-        .total-section {
-          background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
-          color: white;
-          padding: 24px;
-          border-radius: 12px;
-          margin: 24px 0;
+        .totals-section {
+          border-top: 1px solid #000;
+          padding-top: 8px;
+          margin-bottom: 12px;
+        }
+
+        .total-line {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 4px;
+          font-size: 10px;
+        }
+
+        .total-line.final {
+          font-size: 12px;
+          font-weight: bold;
+          border-top: 1px solid #000;
+          border-bottom: 1px solid #000;
+          padding: 6px 0;
+          margin-top: 6px;
+        }
+
+        .payment-section {
           text-align: center;
+          font-size: 10px;
+          font-weight: bold;
+          border: 1px solid #000;
+          padding: 6px;
+          background: #f5f5f5;
         }
 
-        .total-section h3 {
-          font-size: 16px;
-          font-weight: 400;
-          margin-bottom: 8px;
-          opacity: 0.9;
-        }
-
-        .total-amount {
-          font-size: 32px;
-          font-weight: 700;
-          font-family: 'Courier New', monospace;
-          color: #10b981;
-        }
-
-        .signature-section {
-          margin-top: 40px;
-          padding: 24px 0;
-          border-top: 2px dashed #d1d5db;
-        }
-
-        .signature-line {
-          width: 280px;
-          height: 2px;
-          background: linear-gradient(90deg, #d1d5db 0%, #9ca3af 50%, #d1d5db 100%);
-          margin: 32px auto 12px;
-          border-radius: 1px;
-        }
-
-        .signature-label {
+        .footer {
           text-align: center;
-          font-size: 14px;
-          color: #6b7280;
-          font-weight: 500;
-        }
-
-        .receipt-footer {
-          background: #f8fafc;
-          text-align: center;
-          padding: 24px;
-          border-top: 1px solid #e5e7eb;
-        }
-
-        .receipt-footer p {
-          margin-bottom: 8px;
-          font-size: 14px;
-          color: #6b7280;
-        }
-
-        .receipt-footer .brand {
-          color: #8b5cf6;
-          font-weight: 600;
-          font-size: 16px;
-        }
-
-        .thank-you {
-          font-size: 18px;
-          font-weight: 600;
-          color: #10b981;
-          margin-bottom: 8px;
+          margin-top: 12px;
+          font-size: 9px;
+          border-top: 1px dotted #000;
+          padding-top: 6px;
         }
 
         @media print {
+          @page {
+            size: 80mm auto;
+            margin: 5mm;
+          }
+          
           body {
             margin: 0;
-            padding: 0;
-            background: white;
+            padding: 5px;
+            font-size: 10px;
           }
-
-          .receipt-container {
-            box-shadow: none;
-            max-width: none;
-            margin: 0;
-          }
-
-          .signature-line {
-            margin-top: 50px;
+          
+          .receipt {
+            border: 1px solid #000;
+            padding: 8px;
           }
         }
       </style>
     </head>
     <body>
-      <div class="receipt-container">
-        <div class="receipt-header">
-          <h1>🏪 ${nameStore}</h1>
-          <h2>Comprovante de Venda</h2>
+      <div class="receipt">
+        <!-- Nome da loja -->
+        <div class="store-name">
+          ${nameStore}
         </div>
 
-        <div class="receipt-body">
-          <div class="receipt-info">
-            <p><strong>📅 Data:</strong> <span>${date} às ${time}</span></p>
-            <p><strong>👤 Cliente:</strong> <span>${sale.customerName || "Cliente Anônimo"}</span></p>
-            <p><strong>💳 Pagamento:</strong> <span>${paymentLabel}</span></p>
-          </div>
+        <!-- Data da compra -->
+        <div class="purchase-date">
+          ${date} - ${time}
+        </div>
 
-          <div class="items-section">
-            <table>
-              <thead>
-                <tr>
-                  <th>Produto</th>
-                  <th>Qtd</th>
-                  <th>Preço Unit.</th>
-                  <th>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${sale.items
-                  .map(
-                    (item) => `
-                    <tr>
-                      <td class="item-name">${item.productName}</td>
-                      <td class="item-quantity">${item.quantity}</td>
-                      <td class="item-price">${formatPrice(Number(item.unitPrice))}</td>
-                      <td class="item-price">${formatPrice(Number(item.subtotal))}</td>
-                    </tr>
-                  `
-                  )
-                  .join("")}
-              </tbody>
-            </table>
-          </div>
+        <!-- Produtos -->
+        <div class="items-section">
+          ${sale.items
+            .map(
+              (item) => `
+              <div class="item">
+                <div class="item-details">
+                  <span class="item-qty">${item.quantity}x</span>
+                  <span class="item-name">${item.productName}</span>
+                </div>
+                <div class="item-value">R$ ${formatPrice(Number(item.subtotal))}</div>
+              </div>
+            `
+            )
+            .join("")}
+        </div>
 
-          <div class="total-section">
-            <h3>Total da Venda</h3>
-            <div class="total-amount">R$ ${formatPrice(Number(sale.total))}</div>
+        <!-- Totais -->
+        <div class="totals-section">
+          <div class="total-line">
+            <span>Valor dos produtos:</span>
+            <span>R$ ${formatPrice(subtotal)}</span>
           </div>
-
-          <div class="signature-section">
-            <div class="signature-line"></div>
-            <div class="signature-label">✍️ Assinatura do Vendedor</div>
-            <div class="signature-line"></div>
-            <div class="signature-label">✍️ Assinatura do Cliente (Opcional)</div>
+          
+          ${totalDiscounts > 0 ? `
+            <div class="total-line">
+              <span>Descontos:</span>
+              <span>- R$ ${formatPrice(totalDiscounts)}</span>
+            </div>
+          ` : ''}
+          
+          <div class="total-line final">
+            <span>TOTAL:</span>
+            <span>R$ ${formatPrice(total)}</span>
           </div>
         </div>
 
-        <div class="receipt-footer">
-          <p class="thank-you">✨ Obrigado pela compra!</p>
-          <p class="brand">${nameStore}</p>
-          <p>Sistema de Vendas & Controle de Estoque</p>
+        <!-- Forma de pagamento -->
+        <div class="payment-section">
+          FORMA DE PAGAMENTO: ${paymentLabel.toUpperCase()}
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          ${sale.customerName ? `Cliente: ${sale.customerName}<br>` : ''}
+          Obrigado pela compra!<br>
+          ${nameStore}
         </div>
       </div>
     </body>
