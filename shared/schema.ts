@@ -1,4 +1,4 @@
-import { pgTable, text, serial, uuid, integer, decimal, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, uuid, integer, decimal, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -18,7 +18,10 @@ export const products = pgTable("products", {
   image: text("image").notNull(),
   description: text("description"),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
-  stock: integer("stock").notNull().default(0),
+  variations: jsonb("variations")
+    .$type<{ id: string; stock: number; variation: string }[]>()
+    .notNull()
+    .default(sql`'[]'::jsonb`),
   minStock: integer("min_stock").notNull().default(0),
   category: text("category").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -29,6 +32,7 @@ export const stockMovements = pgTable("stock_movements", {
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   productId: uuid("product_id").notNull(),
+  variationId: uuid("variation_id").notNull(),
   type: text("type").notNull(), // 'in' or 'out'
   quantity: integer("quantity").notNull(),
   previousStock: integer("previous_stock").notNull(),
@@ -54,6 +58,7 @@ export const saleItems = pgTable("sale_items", {
   saleId: uuid("sale_id").notNull(),
   productId: uuid("product_id").notNull(),
   productName: text("product_name").notNull(),
+  variationId: uuid("variation_id").notNull(),
   quantity: integer("quantity").notNull(),
   unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
   discount: decimal("discount", { precision: 5, scale: 2 }).default("0"),

@@ -54,11 +54,14 @@ export default function Products() {
 
     const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
 
+    // Calcular estoque total das variações
+    const totalStock = product.variations?.reduce((sum, variation) => sum + variation.stock, 0) || 0;
+
     const matchesStock =
       stockFilter === "all" ||
-      (stockFilter === "in-stock" && product.stock > 0) ||
-      (stockFilter === "low-stock" && product.stock <= product.minStock) ||
-      (stockFilter === "out-of-stock" && product.stock === 0);
+      (stockFilter === "in-stock" && totalStock > 0) ||
+      (stockFilter === "low-stock" && totalStock > 0 && totalStock <= product.minStock) ||
+      (stockFilter === "out-of-stock" && totalStock === 0);
 
     return matchesSearch && matchesCategory && matchesStock;
   });
@@ -77,14 +80,16 @@ export default function Products() {
   };
 
   const getStockBadgeColor = (product: Product) => {
-    if (product.stock === 0) return "destructive";
-    if (product.stock <= product.minStock) return "secondary";
+    const totalStock = product.variations?.reduce((sum, variation) => sum + variation.stock, 0) || 0;
+    if (totalStock === 0) return "destructive";
+    if (totalStock <= product.minStock) return "secondary";
     return "default";
   };
 
   const getStockText = (product: Product) => {
-    if (product.stock === 0) return "Sem estoque";
-    if (product.stock <= product.minStock) return "Estoque baixo";
+    const totalStock = product.variations?.reduce((sum, variation) => sum + variation.stock, 0) || 0;
+    if (totalStock === 0) return "Sem estoque";
+    if (totalStock <= product.minStock) return "Estoque baixo";
     return "Em estoque";
   };
 
@@ -192,20 +197,51 @@ export default function Products() {
                     <span className="text-gray-400">Preço:</span>
                     <span className="font-semibold text-accent-400">{formatPrice(Number(product.price || 0))}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Estoque:</span>
-                    <span
-                      className={`font-semibold ${
-                        product.stock === 0
-                          ? "text-red-400"
-                          : product.stock <= product.minStock
-                          ? "text-yellow-400"
-                          : "text-secondary-400"
-                      }`}
-                    >
-                      {product.stock} unidades
-                    </span>
-                  </div>
+                  
+                  {/* Variações */}
+                  {product.variations && product.variations.length > 0 ? (
+                    <>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Estoque Total:</span>
+                        <span
+                          className={`font-semibold ${
+                            product.variations.reduce((sum, v) => sum + v.stock, 0) === 0
+                              ? "text-red-400"
+                              : product.variations.reduce((sum, v) => sum + v.stock, 0) <= product.minStock
+                              ? "text-yellow-400"
+                              : "text-secondary-400"
+                          }`}
+                        >
+                          {product.variations.reduce((sum, v) => sum + v.stock, 0)} unidades
+                        </span>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <span className="text-gray-400 text-sm">Variações:</span>
+                        <div className="max-h-16 overflow-y-auto space-y-1">
+                          {product.variations.map((variation, index) => (
+                            <div key={variation.id || index} className="flex justify-between text-xs bg-dark-700 p-1 rounded">
+                              <span className="text-gray-300 truncate flex-1 mr-2">{variation.variation}</span>
+                              <span className={`font-medium ${
+                                variation.stock === 0 ? "text-red-400" : 
+                                variation.stock <= 5 ? "text-yellow-400" : "text-secondary-400"
+                              }`}>
+                                {variation.stock}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Estoque:</span>
+                      <span className="text-gray-500">
+                        Sem variações cadastradas
+                      </span>
+                    </div>
+                  )}
+                  
                   <div className="flex justify-between text-sm items-center">
                     <span className="text-gray-400">Categoria:</span>
                     <Badge variant="outline" className="bg-secondary-500/20 text-secondary-400 border-secondary-400/30">
@@ -231,7 +267,7 @@ export default function Products() {
                   <Button
                     size="sm"
                     className="flex-1 bg-gradient-to-r from-accent-400 to-accent-500 hover:from-accent-500 hover:to-accent-600"
-                    disabled={product.stock === 0}
+                    disabled={product.variations?.reduce((sum, v) => sum + v.stock, 0) === 0}
                   >
                     <Link className={"flex items-center"} href={`/sales?productID=${product.id}`}>
                       <ShoppingCart className="w-4 h-4 sm:mr-2" />
