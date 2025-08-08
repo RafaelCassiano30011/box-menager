@@ -1,1 +1,0 @@
-ALTER TABLE "variations" ADD CONSTRAINT "variations_name_unique" UNIQUE("name");

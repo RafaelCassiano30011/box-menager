@@ -22,20 +22,6 @@
       "when": 1754614042382,
       "tag": "0002_nebulous_calypso",
       "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1754616244269,
-      "tag": "0003_silky_human_torch",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1754617056125,
-      "tag": "0004_tiny_mac_gargan",
-      "breakpoints": true
     }
   ]
 }
