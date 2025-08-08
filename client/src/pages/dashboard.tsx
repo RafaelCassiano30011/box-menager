@@ -215,18 +215,45 @@ export default function Dashboard() {
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {lowStockProducts.slice(0, 3).map((product) => {
-                    //const Icon = getProductIcon(product.category);
+                    const totalStock = product.variations?.reduce((sum, v) => sum + v.stock, 0) || 0;
+                    const lowStockVariations = product.variations?.filter(v => v.stock <= 5) || [];
+                    
                     return (
                       <div key={product.id} className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center space-x-2">
-                            <img className="w-24 h-24 rounded-lg" src={product.image} alt={product.name} />
-
-                            {/*<Icon className="w-4 h-4 text-red-400" />*/}
-                            <h4 className="font-medium">{product.name}</h4>
+                            <img className="w-16 h-16 rounded-lg object-cover" src={product.image} alt={product.name} />
+                            <div>
+                              <h4 className="font-medium">{product.name}</h4>
+                              <span className="text-red-400 text-sm font-bold">
+                                {totalStock} unidades totais
+                              </span>
+                            </div>
                           </div>
-                          <span className="text-red-400 text-sm font-bold">{product.stock} unidades</span>
                         </div>
+                        
+                        {/* Variações com estoque baixo */}
+                        <div className="mb-3">
+                          <p className="text-gray-400 text-xs mb-1">Variações em falta:</p>
+                          <div className="space-y-1">
+                            {lowStockVariations.slice(0, 3).map((variation, index) => (
+                              <div key={variation.id || index} className="flex justify-between text-xs">
+                                <span className="text-gray-300 truncate">{variation.variation}</span>
+                                <span className={`font-medium ${
+                                  variation.stock === 0 ? "text-red-500" : "text-yellow-500"
+                                }`}>
+                                  {variation.stock}
+                                </span>
+                              </div>
+                            ))}
+                            {lowStockVariations.length > 3 && (
+                              <p className="text-xs text-gray-500">
+                                +{lowStockVariations.length - 3} outras variações
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        
                         <p className="text-gray-400 text-sm mb-3">Estoque mínimo: {product.minStock}</p>
                         <Button className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white">
                           Repor Estoque

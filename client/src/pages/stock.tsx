@@ -14,6 +14,7 @@ import { useLocation } from "wouter";
 
 export default function Stock() {
   const [selectedProductId, setSelectedProductId] = useState("");
+  const [selectedVariationId, setSelectedVariationId] = useState("");
   const [movementType, setMovementType] = useState("in");
   const [quantity, setQuantity] = useState("");
   const [reason, setReason] = useState("");
@@ -40,7 +41,13 @@ export default function Stock() {
   });
 
   const createMovementMutation = useMutation({
-    mutationFn: async (data: { productId: string; type: string; quantity: number; reason?: string }) => {
+    mutationFn: async (data: { 
+      productId: string; 
+      variationId?: string;
+      type: string; 
+      quantity: number; 
+      reason?: string;
+    }) => {
       await apiRequest("POST", "/api/stock-movements", data);
     },
     onSuccess: () => {
@@ -48,6 +55,7 @@ export default function Stock() {
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/metrics"] });
       setSelectedProductId("");
+      setSelectedVariationId("");
       setQuantity("");
       setReason("");
       toast({
@@ -76,8 +84,29 @@ export default function Stock() {
       return;
     }
 
+    const product = products?.find(p => p.id === selectedProductId);
+    if (!product) {
+      toast({
+        title: "Erro",
+        description: "Produto não encontrado.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Se o produto tem variações, é obrigatório selecionar uma
+    if (product.variations && product.variations.length > 0 && !selectedVariationId) {
+      toast({
+        title: "Erro",
+        description: "Selecione uma variação do produto.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     createMovementMutation.mutate({
       productId: selectedProductId,
+      variationId: selectedVariationId || undefined,
       type: movementType,
       quantity: parseInt(quantity),
       reason: reason || undefined,
@@ -130,24 +159,54 @@ export default function Stock() {
             <CardTitle className="text-lg sm:text-xl font-semibold">Movimentação de Estoque</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               <div>
                 <Label htmlFor="product" className="text-gray-300">
                   Produto
                 </Label>
-                <Select value={selectedProductId} onValueChange={setSelectedProductId}>
+                <Select value={selectedProductId} onValueChange={(value) => {
+                  setSelectedProductId(value);
+                  setSelectedVariationId(""); // Reset variação quando trocar produto
+                }}>
                   <SelectTrigger className="bg-dark-900 border-gray-600 focus:border-accent-400">
                     <SelectValue placeholder="Selecione um produto" />
                   </SelectTrigger>
                   <SelectContent>
-                    {products?.map((product) => (
-                      <SelectItem key={product.id} value={product.id.toString()}>
-                        {product.name} (Estoque: {product.stock})
-                      </SelectItem>
-                    ))}
+                    {products?.map((product) => {
+                      const totalStock = product.variations?.reduce((sum, v) => sum + v.stock, 0) || 0;
+                      return (
+                        <SelectItem key={product.id} value={product.id.toString()}>
+                          {product.name} (Estoque Total: {totalStock})
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Seletor de Variação */}
+              {selectedProductId && (
+                <div>
+                  <Label htmlFor="variation" className="text-gray-300">
+                    Variação
+                  </Label>
+                  <Select value={selectedVariationId} onValueChange={setSelectedVariationId}>
+                    <SelectTrigger className="bg-dark-900 border-gray-600 focus:border-accent-400">
+                      <SelectValue placeholder="Selecione uma variação" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {products
+                        ?.find(p => p.id === selectedProductId)
+                        ?.variations
+                        ?.map((variation) => (
+                          <SelectItem key={variation.id} value={variation.id}>
+                            {variation.variation} (Estoque: {variation.stock})
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               <div>
                 <Label htmlFor="type" className="text-gray-300">

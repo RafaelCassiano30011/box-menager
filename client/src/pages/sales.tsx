@@ -17,6 +17,8 @@ import { generateReceiptPDF } from "@/lib/pdf-generator";
 interface SaleItem {
   productId: string;
   productName: string;
+  variationId?: string;
+  variationName?: string;
   quantity: number;
   unitPrice: number;
   discount: number;
@@ -27,6 +29,7 @@ export default function Sales() {
   const [customerName, setCustomerName] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [selectedProductId, setSelectedProductId] = useState("");
+  const [selectedVariationId, setSelectedVariationId] = useState("");
   const [getSaleId, setGetSaleId] = useState("");
   const [selectedQuantity, setSelectedQuantity] = useState("1");
   const [selectedDiscount, setSelectedDiscount] = useState("0");
@@ -86,84 +89,112 @@ export default function Sales() {
     },
   });
 
-  const addProductToCart = () => {
-    if (!selectedProductId || !selectedQuantity) {
-      toast({
-        title: "Erro",
-        description: "Selecione um produto e informe a quantidade.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+    const addToCart = () => {
     const product = products?.find((p) => p.id === selectedProductId);
     if (!product) return;
 
-    if (product.stock < parseInt(selectedQuantity)) {
-      toast({
-        title: "Erro",
-        description: "Quantidade indisponível em estoque.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Check if product is already in cart
-    const existingItemIndex = cartItems.findIndex((item) => item.productId === product.id);
-
-    if (existingItemIndex >= 0) {
-      // Update existing item
-      const updatedItems = [...cartItems];
-      const existingItem = updatedItems[existingItemIndex];
-      const newQuantity = existingItem.quantity + parseInt(selectedQuantity);
-
-      if (newQuantity > product.stock) {
+    // Se o produto tem variações, é obrigatório selecionar uma
+    if (product.variations && product.variations.length > 0) {
+      if (!selectedVariationId) {
         toast({
           title: "Erro",
-          description: "Quantidade total excede o estoque disponível.",
+          description: "Selecione uma variação do produto.",
           variant: "destructive",
         });
         return;
       }
 
-      const unitPrice = Number(product.price);
-      const discount = Number(selectedDiscount);
-      const subtotal = unitPrice * newQuantity * (1 - discount / 100);
+      const selectedVariation = product.variations.find(v => v.id === selectedVariationId);
+      if (!selectedVariation) {
+        toast({
+          title: "Erro",
+          description: "Variação não encontrada.",
+          variant: "destructive",
+        });
+        return;
+      }
 
-      updatedItems[existingItemIndex] = {
-        ...existingItem,
-        quantity: newQuantity,
-        discount,
-        subtotal,
-      };
+      if (selectedVariation.stock < parseInt(selectedQuantity)) {
+        toast({
+          title: "Erro",
+          description: `Quantidade indisponível. Estoque da variação: ${selectedVariation.stock}`,
+          variant: "destructive",
+        });
+        return;
+      }
 
-      setCartItems(updatedItems);
+      // Verifica se já existe item no carrinho com a mesma variação
+      const existingItemIndex = cartItems.findIndex(
+        (item) => item.productId === product.id && item.variationId === selectedVariationId
+      );
+
+      if (existingItemIndex >= 0) {
+        // Atualiza item existente
+        const updatedItems = [...cartItems];
+        const existingItem = updatedItems[existingItemIndex];
+        const newQuantity = existingItem.quantity + parseInt(selectedQuantity);
+
+        if (newQuantity > selectedVariation.stock) {
+          toast({
+            title: "Erro",
+            description: "Quantidade total excede o estoque disponível da variação.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const unitPrice = Number(product.price);
+        const discount = Number(selectedDiscount);
+        const subtotal = unitPrice * newQuantity * (1 - discount / 100);
+
+        updatedItems[existingItemIndex] = {
+          ...existingItem,
+          quantity: newQuantity,
+          discount,
+          subtotal,
+        };
+
+        setCartItems(updatedItems);
+      } else {
+        // Adiciona novo item com variação
+        const unitPrice = Number(product.price);
+        const quantity = parseInt(selectedQuantity);
+        const discount = Number(selectedDiscount);
+        const subtotal = unitPrice * quantity * (1 - discount / 100);
+
+        const newItem: SaleItem = {
+          productId: product.id,
+          productName: product.name,
+          variationId: selectedVariation.id,
+          variationName: selectedVariation.variation,
+          quantity,
+          unitPrice,
+          discount,
+          subtotal,
+        };
+
+        setCartItems([...cartItems, newItem]);
+      }
     } else {
-      // Add new item
-      const unitPrice = Number(product.price);
-      const quantity = parseInt(selectedQuantity);
-      const discount = Number(selectedDiscount);
-      const subtotal = unitPrice * quantity * (1 - discount / 100);
-
-      const newItem: SaleItem = {
-        productId: product.id,
-        productName: product.name,
-        quantity,
-        unitPrice,
-        discount,
-        subtotal,
-      };
-
-      setCartItems([...cartItems, newItem]);
+      // Produto sem variações (comportamento antigo)
+      toast({
+        title: "Aviso",
+        description: "Este produto não possui variações cadastradas.",
+        variant: "destructive",
+      });
+      return;
     }
 
-    setSelectedProductId("");
+    // Reset form
     setSelectedQuantity("1");
     setSelectedDiscount("0");
+    setSelectedVariationId("");
   };
 
-  const removeFromCart = (productId: string) => {
-    setCartItems(cartItems.filter((item) => item.productId !== productId));
+  const removeFromCart = (productId: string, variationId?: string) => {
+    setCartItems(cartItems.filter((item) => 
+      !(item.productId === productId && item.variationId === variationId)
+    ));
   };
 
   const getTotalAmount = () => {
@@ -295,7 +326,7 @@ export default function Sales() {
                     </SelectTrigger>
                     <SelectContent>
                       {products
-                        ?.filter((p) => p.stock > 0)
+                        ?.filter((p) => p.variations && p.variations.some(v => v.stock > 0))
                         .map((product) => (
                           <SelectItem key={product.id} value={product.id.toString()}>
                             {product.name} - R$ {formatPrice(Number(product.price))}
@@ -304,6 +335,31 @@ export default function Sales() {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {/* Seletor de Variações */}
+                {selectedProductId && (
+                  <div>
+                    <Label htmlFor="variation-select" className="text-gray-300 text-sm mb-2 block">
+                      Variação
+                    </Label>
+                    <Select value={selectedVariationId} onValueChange={setSelectedVariationId}>
+                      <SelectTrigger id="variation-select" className="bg-dark-900 border-gray-600 focus:border-primary-400">
+                        <SelectValue placeholder="Selecione uma variação" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {products
+                          ?.find(p => p.id === selectedProductId)
+                          ?.variations
+                          ?.filter(v => v.stock > 0)
+                          .map((variation) => (
+                            <SelectItem key={variation.id} value={variation.id}>
+                              {variation.variation} - Estoque: {variation.stock}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 <div>
                   <Label htmlFor="quantity-input" className="text-gray-300 text-sm mb-2 block">
@@ -340,7 +396,7 @@ export default function Sales() {
                 <div className="flex items-end">
                   <Button
                     type="button"
-                    onClick={addProductToCart}
+                    onClick={addToCart}
                     className="w-full bg-gradient-to-r from-secondary-400 to-secondary-500 hover:from-secondary-500 hover:to-secondary-600"
                   >
                     <Plus className="w-4 h-4 mr-2" />
@@ -357,15 +413,20 @@ export default function Sales() {
                 <p className="text-gray-400 text-center py-4">Nenhum produto adicionado</p>
               ) : (
                 <div className="space-y-2">
-                  {cartItems.map((item) => (
+                  {cartItems.map((item, index) => (
                     <div
-                      key={item.productId}
+                      key={`${item.productId}-${item.variationId || index}`}
                       className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-dark-800 rounded-lg gap-3"
                     >
                       <div className="flex items-center space-x-3 flex-1">
                         <span className="text-xl">📦</span>
                         <div className="flex-1">
                           <p className="font-medium">{item.productName}</p>
+                          {item.variationName && (
+                            <p className="text-secondary-400 text-sm font-medium">
+                              {item.variationName}
+                            </p>
+                          )}
                           <p className="text-gray-400 text-sm">
                             {item.quantity}x unidades - {formatPrice(Number(item.unitPrice))} cada
                             {item.discount > 0 && ` (${item.discount}% desc.)`}
@@ -377,7 +438,7 @@ export default function Sales() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeFromCart(item.productId)}
+                          onClick={() => removeFromCart(item.productId, item.variationId)}
                           className="text-red-400 hover:text-red-300"
                         >
                           <Minus className="w-4 h-4" />
