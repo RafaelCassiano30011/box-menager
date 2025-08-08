@@ -10,6 +10,10 @@ export const categories = pgTable("categories", {
   name: text("name").notNull().unique(),
 });
 
+export const variations = pgTable("variations", {
+  name: text("name").unique().notNull(),
+});
+
 export const products = pgTable("products", {
   id: uuid("id")
     .primaryKey()

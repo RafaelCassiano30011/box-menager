@@ -4,6 +4,7 @@ import {
   products,
   stockMovements,
   sales,
+  variations,
   saleItems,
   Product,
   InsertProduct,
@@ -22,6 +23,10 @@ import { IStorageRespository } from "./repositories/storage";
 export class PostgresStorage implements IStorageRespository {
   async getProducts(): Promise<Product[]> {
     return await drizzle.select().from(products).orderBy(desc(products.createdAt));
+  }
+
+  async getVariations(): Promise<{ name: string }[]> {
+    return await drizzle.select().from(variations);
   }
 
   async getProduct(id: number): Promise<Product | undefined> {

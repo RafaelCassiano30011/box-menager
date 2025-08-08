@@ -47,12 +47,14 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
     queryFn: async () => {
       try {
         const response = await apiRequest("GET", "/api/variations");
-        return (response as any) || [];
+        return await response.json();
       } catch (error) {
         return [];
       }
     },
   });
+
+  console.log(existingVariations);
 
   const {
     register,
@@ -126,7 +128,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
       setValue("image", product.image);
       setValue("description", product.description || "");
       setValue("price", product.price);
-      setValue("minStock", product.minStock.toString());
+      setValue("minStock", product.minStock.toString() ?? 0);
       setValue("category", product.category);
       setValue("variations", product.variations || []);
       setVariations(product.variations || []);
@@ -171,15 +173,13 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
   };
 
   const removeVariation = (id: string) => {
-    const updatedVariations = variations.filter(v => v.id !== id);
+    const updatedVariations = variations.filter((v) => v.id !== id);
     setVariations(updatedVariations);
     setValue("variations", updatedVariations);
   };
 
   const updateVariationStock = (id: string, stock: number) => {
-    const updatedVariations = variations.map(v => 
-      v.id === id ? { ...v, stock } : v
-    );
+    const updatedVariations = variations.map((v) => (v.id === id ? { ...v, stock } : v));
     setVariations(updatedVariations);
     setValue("variations", updatedVariations);
   };
@@ -303,7 +303,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
           {/* Seção de Variações */}
           <div>
             <Label className="text-gray-300 text-lg font-semibold">Variações do Produto</Label>
-            
+
             {/* Adicionar nova variação */}
             <div className="mt-3 p-4 border border-gray-600 rounded-lg bg-dark-900">
               <div className="flex gap-2 mb-3">
@@ -340,14 +340,14 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
                 <div className="mb-3">
                   <p className="text-sm text-gray-400 mb-2">Variações existentes (clique para adicionar):</p>
                   <div className="flex flex-wrap gap-2">
-                    {(existingVariations as string[]).map((variation: string, index: number) => (
+                    {(existingVariations as { name: string }[]).map((variation, index: number) => (
                       <button
                         key={index}
                         type="button"
-                        onClick={() => setNewVariation(variation)}
+                        onClick={() => setNewVariation(variation.name)}
                         className="px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 rounded"
                       >
-                        {variation}
+                        {variation.name}
                       </button>
                     ))}
                   </div>
@@ -360,7 +360,10 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
               <div className="mt-4 space-y-2">
                 <p className="text-sm text-gray-400">Variações adicionadas:</p>
                 {variations.map((variation) => (
-                  <div key={variation.id} className="flex items-center gap-2 p-3 bg-dark-800 rounded border border-gray-600">
+                  <div
+                    key={variation.id}
+                    className="flex items-center gap-2 p-3 bg-dark-800 rounded border border-gray-600"
+                  >
                     <div className="flex-1">
                       <span className="text-gray-300">{variation.variation}</span>
                     </div>

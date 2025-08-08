@@ -11,5 +11,7 @@ export interface ProductRepository {
 
   deleteProduct(id: string): Promise<boolean>;
 
-  updateProductStock(props: { id: string; stock: number }): Promise<Product | undefined>;
+  updateProductStock(props: { id: string; variationId: string; stock: number }): Promise<Product | undefined>;
+
+  addProductVariations(props: { variations?: { name: string }[] }): Promise<void>;
 }

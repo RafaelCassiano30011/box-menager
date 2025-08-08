@@ -13,6 +13,16 @@ export class CreateProductUseCase {
 
     const productCreated = await this.productsRepository.createProduct({ ...product, variations: variationsWithID });
 
+    console.log(productCreated)
+
+    await this.productsRepository.addProductVariations({
+      variations: product.variations?.map((variation) => {
+        return {
+          name: variation.variation,
+        };
+      }),
+    });
+
     return productCreated;
   }
 }
