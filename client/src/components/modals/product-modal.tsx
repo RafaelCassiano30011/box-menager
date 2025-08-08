@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,14 +13,20 @@ import { apiRequest } from "@/lib/queryClient";
 import type { Product, InsertProduct } from "@shared/schema";
 import { z } from "zod";
 import { uploadImage } from "@/services/uploadImage";
+import { Plus, X } from "lucide-react";
 
 const formSchema = insertProductSchema.extend({
   price: z.string().min(1, "Preço é obrigatório"),
-  stock: z.string().min(1, "Estoque inicial é obrigatório"),
   minStock: z.string().min(0, "Estoque mínimo deve ser 0 ou maior"),
 });
 
 type FormData = z.infer<typeof formSchema>;
+
+interface Variation {
+  id: string;
+  variation: string;
+  stock: number;
+}
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -31,6 +37,22 @@ interface ProductModalProps {
 export default function ProductModal({ isOpen, onClose, product }: ProductModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [variations, setVariations] = useState<Variation[]>([]);
+  const [newVariation, setNewVariation] = useState("");
+  const [newVariationStock, setNewVariationStock] = useState("");
+
+  // Buscar variações existentes
+  const { data: existingVariations = [] } = useQuery({
+    queryKey: ["/api/variations"],
+    queryFn: async () => {
+      try {
+        const response = await apiRequest("GET", "/api/variations");
+        return (response as any) || [];
+      } catch (error) {
+        return [];
+      }
+    },
+  });
 
   const {
     register,
@@ -46,9 +68,9 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
       image: "",
       description: "",
       price: "",
-      stock: "",
       minStock: "",
       category: "",
+      variations: [],
     },
   });
 
@@ -104,11 +126,13 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
       setValue("image", product.image);
       setValue("description", product.description || "");
       setValue("price", product.price);
-      setValue("stock", product.stock.toString());
       setValue("minStock", product.minStock.toString());
       setValue("category", product.category);
+      setValue("variations", product.variations || []);
+      setVariations(product.variations || []);
     } else {
       reset();
+      setVariations([]);
     }
   }, [product, setValue, reset]);
 
@@ -118,9 +142,9 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
       image: data.image,
       description: data.description || undefined,
       price: data.price,
-      stock: parseInt(data.stock),
       minStock: parseInt(data.minStock),
       category: data.category,
+      variations: variations,
     };
 
     if (product) {
@@ -128,6 +152,36 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
     } else {
       createProductMutation.mutate(productData);
     }
+  };
+
+  const addVariation = () => {
+    if (!newVariation.trim() || !newVariationStock) return;
+
+    const variation: Variation = {
+      id: Date.now().toString(),
+      variation: newVariation.trim(),
+      stock: parseInt(newVariationStock),
+    };
+
+    const updatedVariations = [...variations, variation];
+    setVariations(updatedVariations);
+    setValue("variations", updatedVariations);
+    setNewVariation("");
+    setNewVariationStock("");
+  };
+
+  const removeVariation = (id: string) => {
+    const updatedVariations = variations.filter(v => v.id !== id);
+    setVariations(updatedVariations);
+    setValue("variations", updatedVariations);
+  };
+
+  const updateVariationStock = (id: string, stock: number) => {
+    const updatedVariations = variations.map(v => 
+      v.id === id ? { ...v, stock } : v
+    );
+    setVariations(updatedVariations);
+    setValue("variations", updatedVariations);
   };
 
   return (
@@ -215,7 +269,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="price" className="text-gray-300">
                 Preço (R$)
@@ -232,20 +286,6 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
             </div>
 
             <div>
-              <Label htmlFor="stock" className="text-gray-300">
-                {product ? "Estoque Atual" : "Estoque Inicial"}
-              </Label>
-              <Input
-                id="stock"
-                type="number"
-                min="0"
-                {...register("stock")}
-                className="bg-dark-900 border-gray-600 focus:border-secondary-400"
-              />
-              {errors.stock && <p className="text-red-400 text-sm mt-1">{errors.stock.message}</p>}
-            </div>
-
-            <div>
               <Label htmlFor="minStock" className="text-gray-300">
                 Estoque Mínimo
               </Label>
@@ -258,6 +298,94 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
               />
               {errors.minStock && <p className="text-red-400 text-sm mt-1">{errors.minStock.message}</p>}
             </div>
+          </div>
+
+          {/* Seção de Variações */}
+          <div>
+            <Label className="text-gray-300 text-lg font-semibold">Variações do Produto</Label>
+            
+            {/* Adicionar nova variação */}
+            <div className="mt-3 p-4 border border-gray-600 rounded-lg bg-dark-900">
+              <div className="flex gap-2 mb-3">
+                <div className="flex-1">
+                  <Input
+                    placeholder="Digite uma variação (ex: Tamanho 38, Cor Azul)"
+                    value={newVariation}
+                    onChange={(e) => setNewVariation(e.target.value)}
+                    className="bg-dark-800 border-gray-600 focus:border-secondary-400"
+                  />
+                </div>
+                <div className="w-24">
+                  <Input
+                    type="number"
+                    placeholder="Qtd"
+                    min="0"
+                    value={newVariationStock}
+                    onChange={(e) => setNewVariationStock(e.target.value)}
+                    className="bg-dark-800 border-gray-600 focus:border-secondary-400"
+                  />
+                </div>
+                <Button
+                  type="button"
+                  onClick={addVariation}
+                  className="bg-secondary-500 hover:bg-secondary-600"
+                  disabled={!newVariation.trim() || !newVariationStock}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Sugestões de variações existentes */}
+              {existingVariations.length > 0 && (
+                <div className="mb-3">
+                  <p className="text-sm text-gray-400 mb-2">Variações existentes (clique para adicionar):</p>
+                  <div className="flex flex-wrap gap-2">
+                    {(existingVariations as string[]).map((variation: string, index: number) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => setNewVariation(variation)}
+                        className="px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 rounded"
+                      >
+                        {variation}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Lista de variações adicionadas */}
+            {variations.length > 0 && (
+              <div className="mt-4 space-y-2">
+                <p className="text-sm text-gray-400">Variações adicionadas:</p>
+                {variations.map((variation) => (
+                  <div key={variation.id} className="flex items-center gap-2 p-3 bg-dark-800 rounded border border-gray-600">
+                    <div className="flex-1">
+                      <span className="text-gray-300">{variation.variation}</span>
+                    </div>
+                    <div className="w-20">
+                      <Input
+                        type="number"
+                        min="0"
+                        value={variation.stock}
+                        onChange={(e) => updateVariationStock(variation.id, parseInt(e.target.value) || 0)}
+                        className="bg-dark-900 border-gray-600 focus:border-secondary-400 text-center"
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      onClick={() => removeVariation(variation.id)}
+                      variant="outline"
+                      size="sm"
+                      className="text-red-400 border-red-400 hover:bg-red-400 hover:text-white"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex space-x-4 pt-4">

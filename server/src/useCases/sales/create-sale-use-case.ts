@@ -12,6 +12,7 @@ interface CreateSaleUseCaseProps {
     unitPrice: string;
     discount?: string;
     subtotal: string;
+    variationId: string;
   }>;
 }
 
@@ -83,6 +84,7 @@ export class CreateSaleUseCase {
         previousStock: product.stock,
         newStock,
         reason: "Venda",
+        variationId: saleItem.variationId,
       });
     }
 

@@ -8,6 +8,20 @@
       "when": 1753328583526,
       "tag": "0000_old_galactus",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1754611091012,
+      "tag": "0001_dusty_mandrill",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1754614042382,
+      "tag": "0002_nebulous_calypso",
+      "breakpoints": true
     }
   ]
 }
