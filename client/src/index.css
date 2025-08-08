@@ -76,44 +76,56 @@
   .gradient-primary {
     background: linear-gradient(135deg, hsl(266, 85%, 58%) 0%, hsl(266, 85%, 48%) 100%);
   }
-  
+
   .gradient-secondary {
     background: linear-gradient(135deg, hsl(190, 90%, 60%) 0%, hsl(190, 90%, 50%) 100%);
   }
-  
+
   .gradient-accent {
     background: linear-gradient(135deg, hsl(166, 72%, 50%) 0%, hsl(166, 72%, 40%) 100%);
   }
-  
+
   .bg-dark-800 {
     background-color: hsl(250, 50%, 12%);
   }
-  
+
   .bg-dark-900 {
     background-color: hsl(240, 62%, 6%);
   }
-  
+
   .text-primary-400 {
     color: hsl(266, 85%, 70%);
   }
-  
+
   .text-secondary-400 {
     color: hsl(190, 90%, 60%);
   }
-  
+
   .text-accent-400 {
     color: hsl(166, 72%, 50%);
   }
-  
+
   .border-primary-500\/30 {
     border-color: hsl(266, 85%, 58%, 0.3);
   }
-  
+
   .border-secondary-400\/30 {
     border-color: hsl(190, 90%, 60%, 0.3);
   }
-  
+
   .border-accent-400\/30 {
     border-color: hsl(166, 72%, 50%, 0.3);
   }
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--secondary);
+  border-radius: 8px;
+}
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 8px;
 }

@@ -186,7 +186,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-dark-800 border-secondary-400/30 max-w-2xl">
+      <DialogContent className="bg-dark-800 border-secondary-400/30 max-w-2xl overflow-y-auto h-4/5">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold flex items-center justify-between">
             {product ? "Editar Produto" : "Cadastrar Novo Produto"}
