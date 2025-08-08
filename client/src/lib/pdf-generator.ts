@@ -539,6 +539,7 @@ function generateReceiptHTML(sale: SaleWithItems): string {
                 <div class="item-details">
                   <span class="item-qty">${item.quantity}x</span>
                   <span class="item-name">${item.productName}</span>
+                  ${item.variationName ? `<br><span style="font-size: 8px; color: #666; margin-left: 15px;">${item.variationName}</span>` : ''}
                 </div>
                 <div class="item-value">R$ ${formatPrice(Number(item.subtotal))}</div>
               </div>
