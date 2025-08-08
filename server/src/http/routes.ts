@@ -11,6 +11,18 @@ export async function appRoutes(app: FastifyInstance) {
 
   // Sales routes
 
+  app.get("/api/variations", async (req, res) => {
+    try {
+      const variations = await storage.getVariations();
+
+      console.log(variations);
+
+      res.send(variations);
+    } catch (error) {
+      res.status(500).send({ message: "Failed to fetch product variations" });
+    }
+  });
+
   // Dashboard routes
   app.get("/api/dashboard/metrics", async (req, res) => {
     try {

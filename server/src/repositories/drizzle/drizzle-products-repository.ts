@@ -1,7 +1,7 @@
 import { ProductRepository } from "../products-repository";
 import { drizzle } from "../../lib/drizzle";
 import { eq, desc } from "drizzle-orm";
-import { products, Product, InsertProduct } from "@shared/schema";
+import { products, Product, InsertProduct, variations } from "@shared/schema";
 
 export class DrizzleProductRepository implements ProductRepository {
   async getProducts(): Promise<Product[]> {
@@ -31,14 +31,29 @@ export class DrizzleProductRepository implements ProductRepository {
     return !product;
   }
 
-  async updateProductStock(props: { id: string; stock: number }): Promise<Product | undefined> {
+  async updateProductStock(props: { id: string; variationId: string; stock: number }): Promise<Product | undefined> {
+    const product = await drizzle.select().from(products).where(eq(products.id, props.id));
+
     const result = await drizzle
       .update(products)
-      .set({ stock: props.stock })
+      .set({
+        variations: product[0].variations.map((item) => ({
+          ...item,
+          stock: item.id === props.variationId ? props.stock : item.stock,
+        })),
+      })
       .where(eq(products.id, props.id))
       .returning();
     return result[0];
   }
 
-  
+  async addProductVariations(props: { variations?: { name: string }[] }): Promise<void> {
+    if (!props.variations || props.variations.length === 0) return;
+
+    await drizzle
+      .insert(variations)
+      .values(props.variations)
+      .onConflictDoNothing({ target: variations.name }) // evita duplicata pelo campo name
+      .returning();
+  }
 }
