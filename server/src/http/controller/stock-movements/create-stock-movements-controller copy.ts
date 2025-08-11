@@ -13,6 +13,7 @@ export const createStockMovement = async (req: FastifyRequest, res: FastifyReply
         productId: z.string().min(1, "Product ID is required"),
         quantity: z.number().positive("Quantity must be a positive number"),
         variationId: z.string().min(1, "Variation ID is required"),
+        reason: z.string().optional(),
       })
       .parse(req.body);
 
