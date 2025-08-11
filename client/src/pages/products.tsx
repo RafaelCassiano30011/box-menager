@@ -185,8 +185,8 @@ export default function Products() {
                   </Button>
                 </div>
 
-                <div className="w-full h-auto aspect-square bg-gray-300 rounded  mb-2">
-                  <img className="w-full rounded-lg" src={product.image} />
+                <div className="w-full h-full aspect-square bg-gray-300 rounded  mb-2">
+                  <img className="w-full object-cover rounded-lg" src={product.image} />
                 </div>
 
                 <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
@@ -197,7 +197,7 @@ export default function Products() {
                     <span className="text-gray-400">Preço:</span>
                     <span className="font-semibold text-accent-400">{formatPrice(Number(product.price || 0))}</span>
                   </div>
-                  
+
                   {/* Variações */}
                   {product.variations && product.variations.length > 0 ? (
                     <>
@@ -215,17 +215,25 @@ export default function Products() {
                           {product.variations.reduce((sum, v) => sum + v.stock, 0)} unidades
                         </span>
                       </div>
-                      
+
                       <div className="space-y-1">
                         <span className="text-gray-400 text-sm">Variações:</span>
                         <div className="max-h-16 overflow-y-auto space-y-1">
                           {product.variations.map((variation, index) => (
-                            <div key={variation.id || index} className="flex justify-between text-xs bg-dark-700 p-1 rounded">
+                            <div
+                              key={variation.id || index}
+                              className="flex justify-between text-xs bg-dark-700 p-1 rounded"
+                            >
                               <span className="text-gray-300 truncate flex-1 mr-2">{variation.variation}</span>
-                              <span className={`font-medium ${
-                                variation.stock === 0 ? "text-red-400" : 
-                                variation.stock <= 5 ? "text-yellow-400" : "text-secondary-400"
-                              }`}>
+                              <span
+                                className={`font-medium ${
+                                  variation.stock === 0
+                                    ? "text-red-400"
+                                    : variation.stock <= 5
+                                    ? "text-yellow-400"
+                                    : "text-secondary-400"
+                                }`}
+                              >
                                 {variation.stock}
                               </span>
                             </div>
@@ -236,12 +244,10 @@ export default function Products() {
                   ) : (
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">Estoque:</span>
-                      <span className="text-gray-500">
-                        Sem variações cadastradas
-                      </span>
+                      <span className="text-gray-500">Sem variações cadastradas</span>
                     </div>
                   )}
-                  
+
                   <div className="flex justify-between text-sm items-center">
                     <span className="text-gray-400">Categoria:</span>
                     <Badge variant="outline" className="bg-secondary-500/20 text-secondary-400 border-secondary-400/30">
