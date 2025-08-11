@@ -18,7 +18,6 @@ export class DrizzleSalesRepository implements SalesRepository {
       });
     }
 
-    console.log(salesWithItems[0].items);
 
     return salesWithItems;
   }

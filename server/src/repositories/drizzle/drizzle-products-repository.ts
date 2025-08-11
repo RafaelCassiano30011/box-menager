@@ -1,11 +1,14 @@
 import { ProductRepository } from "../products-repository";
 import { drizzle } from "../../lib/drizzle";
-import { eq, desc } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { products, Product, InsertProduct, variations } from "@shared/schema";
 
 export class DrizzleProductRepository implements ProductRepository {
   async getProducts(): Promise<Product[]> {
-    return await drizzle.select().from(products).orderBy(desc(products.createdAt));
+    return await drizzle
+      .select()
+      .from(products)
+      .orderBy(sql`LOWER(${products.name}) ASC`);
   }
 
   async getProduct(id: string): Promise<Product | undefined> {
@@ -34,10 +37,12 @@ export class DrizzleProductRepository implements ProductRepository {
   async updateProductStock(props: { id: string; variationId: string; stock: number }): Promise<Product | undefined> {
     const product = await drizzle.select().from(products).where(eq(products.id, props.id));
 
+    console.log(product);
+
     const result = await drizzle
       .update(products)
       .set({
-        variations: product[0].variations.map((item) => ({
+        variations: product[0]?.variations?.map((item) => ({
           ...item,
           stock: item.id === props.variationId ? props.stock : item.stock,
         })),

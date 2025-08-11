@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import type { Product, SaleWithItems } from "@shared/schema";
+import { variations, type Product, type SaleWithItems } from "@shared/schema";
 import { useLocation } from "wouter";
 import { formatPrice } from "@/lib/utils";
 import { generateReceiptPDF } from "@/lib/pdf-generator";
@@ -226,6 +226,8 @@ export default function Sales() {
         quantity: item.quantity,
         unitPrice: item.unitPrice,
         discount: item.discount,
+        variationId: item.variationId,
+        variationName: item.variationName,
       })),
     };
 

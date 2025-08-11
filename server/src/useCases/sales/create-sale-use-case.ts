@@ -13,6 +13,7 @@ interface CreateSaleUseCaseProps {
     discount?: string;
     subtotal: string;
     variationId: string;
+    variationName: string;
   }>;
 }
 
@@ -24,70 +25,80 @@ export class CreateSaleUseCase {
   ) {}
 
   async execute({ items, paymentMethod, customerName }: CreateSaleUseCaseProps) {
-    const validatedItems = [];
-    const products = [];
+    try {
+      const validatedItems = [];
+      const variations = [];
 
-    // Validate stock availability for all items
-    for (const item of items) {
-      const product = await this.productRepository.getProduct(item.productId);
+      // Validate stock availability for all items
+      for (const item of items) {
+        const product = await this.productRepository.getProduct(item.productId);
 
-      if (!product) {
-        throw new Error(`Product with ID ${item.productId} not found`);
+        if (!product) {
+          throw new Error(`Product with ID ${item.productId} not found`);
+        }
+
+        const variationItem = product.variations.find((variation) => variation.id === item.variationId);
+
+        if ((variationItem?.stock || 0) < item.quantity) {
+          throw new Error(
+            `Insufficient stock for product ${product.name} ${variationItem?.variation}. Available: ${
+              variationItem?.stock || 0
+            }, Required: ${item.quantity}`
+          );
+        }
+
+        validatedItems.push(item);
+        variations.push(variationItem);
       }
 
-      if (product.stock < item.quantity) {
-        throw new Error(
-          `Insufficient stock for product ${product.name}. Available: ${product.stock}, Required: ${item.quantity}`
-        );
+      const total = validatedItems.reduce((sum: number, item: any) => {
+        const unitPrice = Number(item.unitPrice);
+        const discount = Number(item.discount || 0);
+        const subtotal = unitPrice * item.quantity * (1 - discount / 100);
+        return sum + subtotal;
+      }, 0);
+
+      // Create the sale with all items
+      const saleResult = await this.salesRepository.createSale({
+        sale: {
+          paymentMethod,
+          customerName,
+          total: total.toFixed(2),
+        },
+        items: validatedItems,
+      });
+
+      // Update stock and create movements for each item
+      for (const saleItem of saleResult.items) {
+        const variation = variations.find((item) => item?.id === saleItem.variationId);
+
+        if (!variation) continue;
+
+        const newStock = variation.stock - saleItem.quantity;
+
+        // Update product stock
+        await this.productRepository.updateProductStock({
+          id: saleItem.productId,
+          stock: newStock,
+          variationId: variation.id,
+        });
+
+        // Create stock movement record
+        await this.stockMovementsRepository.createStockMovement({
+          productId: saleItem.productId,
+          type: "out",
+          quantity: saleItem.quantity,
+          previousStock: variation.stock,
+          newStock,
+          reason: "Venda",
+          variationId: variation.id,
+
+        });
       }
 
-      validatedItems.push(item);
-      products.push(product);
+      return saleResult;
+    } catch (error) {
+      throw error;
     }
-
-    const total = validatedItems.reduce((sum: number, item: any) => {
-      const unitPrice = Number(item.unitPrice);
-      const discount = Number(item.discount || 0);
-      const subtotal = unitPrice * item.quantity * (1 - discount / 100);
-      return sum + subtotal;
-    }, 0);
-
-    // Create the sale with all items
-    const saleResult = await this.salesRepository.createSale({
-      sale: {
-        paymentMethod,
-        customerName,
-        total: total.toFixed(2),
-      },
-      items: validatedItems,
-    });
-
-    // Update stock and create movements for each item
-    for (const saleItem of saleResult.items) {
-      const product = products.find((p) => p.id === saleItem.productId);
-
-      if (!product) continue;
-
-      const newStock = product.stock - saleItem.quantity;
-
-      // Update product stock
-      await this.productRepository.updateProductStock({
-        id: product.id,
-        stock: newStock,
-      });
-
-      // Create stock movement record
-      await this.stockMovementsRepository.createStockMovement({
-        productId: saleItem.productId,
-        type: "out",
-        quantity: saleItem.quantity,
-        previousStock: product.stock,
-        newStock,
-        reason: "Venda",
-        variationId: saleItem.variationId,
-      });
-    }
-
-    return saleResult;
   }
 }

@@ -11,7 +11,7 @@ app.register(appRoutes);
 
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {
-    return reply.status(400).send({ message: "Validation error.", issues: error.format() });
+    return reply.status(400).send(error.format()._errors.map((err) => `${err}`).join(" "));
   }
 
   if (env.NODE_ENV !== "production") {

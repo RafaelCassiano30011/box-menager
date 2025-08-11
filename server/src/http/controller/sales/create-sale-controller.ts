@@ -9,8 +9,6 @@ import z from "zod";
 
 export const createSale = async (req: FastifyRequest, res: FastifyReply) => {
   try {
-    console.log(req.body);
-
     // Validate the entire request body with items included
     const dataParse = z
       .object({
@@ -23,6 +21,8 @@ export const createSale = async (req: FastifyRequest, res: FastifyReply) => {
             quantity: z.number().min(1),
             unitPrice: z.number(),
             discount: z.number().optional().nullable(),
+            variationId: z.string().uuid(),
+            variationName: z.string(),
           })
         ),
       })
@@ -51,6 +51,6 @@ export const createSale = async (req: FastifyRequest, res: FastifyReply) => {
       data: saleResult,
     });
   } catch (error) {
-    throw error;
+    throw new Error(`Failed to create sale: ${error}`);
   }
 };
