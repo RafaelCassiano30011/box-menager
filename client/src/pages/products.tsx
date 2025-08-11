@@ -191,7 +191,7 @@ export default function Products() {
                   )}
                 </div>
 
-                <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
+                <h3 className="text-lg font-semibold mb-2 h-[84px] line-clamp-3">{product.name}</h3>
                 <p className="text-gray-400 text-sm mb-4 line-clamp-2">{product.description}</p>
 
                 <div className="space-y-2 mb-4">
