@@ -41,11 +41,11 @@ export default function Stock() {
   });
 
   const createMovementMutation = useMutation({
-    mutationFn: async (data: { 
-      productId: string; 
+    mutationFn: async (data: {
+      productId: string;
       variationId?: string;
-      type: string; 
-      quantity: number; 
+      type: string;
+      quantity: number;
       reason?: string;
     }) => {
       await apiRequest("POST", "/api/stock-movements", data);
@@ -66,7 +66,7 @@ export default function Stock() {
     onError: (error: any) => {
       toast({
         title: "Erro",
-        description: error.message || "Não foi possível registrar a movimentação.",
+        description: "Não foi possível registrar a movimentação.",
         variant: "destructive",
       });
     },
@@ -84,7 +84,7 @@ export default function Stock() {
       return;
     }
 
-    const product = products?.find(p => p.id === selectedProductId);
+    const product = products?.find((p) => p.id === selectedProductId);
     if (!product) {
       toast({
         title: "Erro",
@@ -164,10 +164,13 @@ export default function Stock() {
                 <Label htmlFor="product" className="text-gray-300">
                   Produto
                 </Label>
-                <Select value={selectedProductId} onValueChange={(value) => {
-                  setSelectedProductId(value);
-                  setSelectedVariationId(""); // Reset variação quando trocar produto
-                }}>
+                <Select
+                  value={selectedProductId}
+                  onValueChange={(value) => {
+                    setSelectedProductId(value);
+                    setSelectedVariationId(""); // Reset variação quando trocar produto
+                  }}
+                >
                   <SelectTrigger className="bg-dark-900 border-gray-600 focus:border-accent-400">
                     <SelectValue placeholder="Selecione um produto" />
                   </SelectTrigger>
@@ -196,9 +199,8 @@ export default function Stock() {
                     </SelectTrigger>
                     <SelectContent>
                       {products
-                        ?.find(p => p.id === selectedProductId)
-                        ?.variations
-                        ?.map((variation) => (
+                        ?.find((p) => p.id === selectedProductId)
+                        ?.variations?.map((variation) => (
                           <SelectItem key={variation.id} value={variation.id}>
                             {variation.variation} (Estoque: {variation.stock})
                           </SelectItem>

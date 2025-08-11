@@ -11,16 +11,23 @@ app.register(appRoutes);
 
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {
-    return reply.status(400).send(error.format()._errors.map((err) => `${err}`).join(" "));
+    const readable = error.errors.map((err) => `${err.path.join(".")}: ${err.message}`).join(",");
+
+    return reply.status(400).send({
+      message: readable,
+      errors: error.errors.map((err) => ({
+        field: err.path.join("."),
+        message: err.message,
+      })),
+    });
   }
 
   if (env.NODE_ENV !== "production") {
     console.error(error);
   } else {
-    // TODO: Here we should log to a external tool like DataDog/NewRelic/Sentry
   }
 
-  return reply.status(500).send({ message: "Internal server error." });
+  return reply.status(500).send({ message: error.message });
 });
 
 async function start() {

@@ -93,7 +93,7 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
     onError: (error: any) => {
       toast({
         title: "Erro",
-        description: error.message || "Não foi possível criar o produto.",
+        description: "Não foi possível criar o produto.",
         variant: "destructive",
       });
     },
@@ -114,9 +114,11 @@ export default function ProductModal({ isOpen, onClose, product }: ProductModalP
       reset();
     },
     onError: (error: any) => {
+      console.error(error);
+
       toast({
         title: "Erro",
-        description: error.message || "Não foi possível atualizar o produto.",
+        description: "Não foi possível atualizar o produto.",
         variant: "destructive",
       });
     },

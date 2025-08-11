@@ -7,8 +7,6 @@ export const createProduct = async (req: FastifyRequest, res: FastifyReply) => {
   try {
     const productData = insertProductSchema.parse(req.body);
 
-    console.log(productData)
-
     const createProductUseCase = new CreateProductUseCase(new DrizzleProductRepository());
 
     const product = await createProductUseCase.execute(productData);

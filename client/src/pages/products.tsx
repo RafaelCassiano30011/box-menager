@@ -175,7 +175,7 @@ export default function Products() {
               key={product.id}
               className="bg-dark-800 border-secondary-400/30 hover:border-secondary-400/50 hover:shadow-lg transition-all duration-300"
             >
-              <CardContent className="relative p-6">
+              <CardContent className="flex flex-col h-full relative p-6">
                 <div className="w-full absolute left-0 flex items-start justify-between px-7 pt-2">
                   <Button size="sm" onClick={() => handleEdit(product)}>
                     <Edit className="w-4 h-4 text-white" />
@@ -185,8 +185,10 @@ export default function Products() {
                   </Button>
                 </div>
 
-                <div className="w-full h-full aspect-square bg-gray-300 rounded  mb-2">
-                  <img className="w-full object-cover rounded-lg" src={product.image} />
+                <div className="w-full h-full max-h-[219px] aspect-square bg-dark-800 border border-primary rounded-lg  mb-2">
+                  {product.image !== "" && (
+                    <img className="w-full h-full object-cover rounded-lg" src={product.image} />
+                  )}
                 </div>
 
                 <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
@@ -217,28 +219,18 @@ export default function Products() {
                       </div>
 
                       <div className="space-y-1">
-                        <span className="text-gray-400 text-sm">Variações:</span>
-                        <div className="max-h-16 overflow-y-auto space-y-1">
-                          {product.variations.map((variation, index) => (
-                            <div
-                              key={variation.id || index}
-                              className="flex justify-between text-xs bg-dark-700 p-1 rounded"
-                            >
-                              <span className="text-gray-300 truncate flex-1 mr-2">{variation.variation}</span>
-                              <span
-                                className={`font-medium ${
-                                  variation.stock === 0
-                                    ? "text-red-400"
-                                    : variation.stock <= 5
-                                    ? "text-yellow-400"
-                                    : "text-secondary-400"
-                                }`}
-                              >
-                                {variation.stock}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
+                        <Select>
+                          <SelectTrigger className="bg-dark-800 border-gray-600 focus:border-secondary-400">
+                            <SelectValue placeholder="Variações" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {product.variations.map((variation) => (
+                              <SelectItem key={variation.id} value={variation.id}>
+                                {variation.variation}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </>
                   ) : (
@@ -260,7 +252,7 @@ export default function Products() {
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-auto">
                   <Button
                     size="sm"
                     className="flex-1 max-w-1/2 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700"

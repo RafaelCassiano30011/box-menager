@@ -83,13 +83,13 @@ export default function Sales() {
     onError: (error: any) => {
       toast({
         title: "Erro",
-        description: error.message || "Não foi possível finalizar a venda.",
+        description: "Não foi possível finalizar a venda.",
         variant: "destructive",
       });
     },
   });
 
-    const addToCart = () => {
+  const addToCart = () => {
     const product = products?.find((p) => p.id === selectedProductId);
     if (!product) return;
 
@@ -104,7 +104,7 @@ export default function Sales() {
         return;
       }
 
-      const selectedVariation = product.variations.find(v => v.id === selectedVariationId);
+      const selectedVariation = product.variations.find((v) => v.id === selectedVariationId);
       if (!selectedVariation) {
         toast({
           title: "Erro",
@@ -192,9 +192,7 @@ export default function Sales() {
   };
 
   const removeFromCart = (productId: string, variationId?: string) => {
-    setCartItems(cartItems.filter((item) => 
-      !(item.productId === productId && item.variationId === variationId)
-    ));
+    setCartItems(cartItems.filter((item) => !(item.productId === productId && item.variationId === variationId)));
   };
 
   const getTotalAmount = () => {
@@ -328,7 +326,7 @@ export default function Sales() {
                     </SelectTrigger>
                     <SelectContent>
                       {products
-                        ?.filter((p) => p.variations && p.variations.some(v => v.stock > 0))
+                        ?.filter((p) => p.variations && p.variations.some((v) => v.stock > 0))
                         .map((product) => (
                           <SelectItem key={product.id} value={product.id.toString()}>
                             {product.name} - R$ {formatPrice(Number(product.price))}
@@ -345,14 +343,16 @@ export default function Sales() {
                       Variação
                     </Label>
                     <Select value={selectedVariationId} onValueChange={setSelectedVariationId}>
-                      <SelectTrigger id="variation-select" className="bg-dark-900 border-gray-600 focus:border-primary-400">
+                      <SelectTrigger
+                        id="variation-select"
+                        className="bg-dark-900 border-gray-600 focus:border-primary-400"
+                      >
                         <SelectValue placeholder="Selecione uma variação" />
                       </SelectTrigger>
                       <SelectContent>
                         {products
-                          ?.find(p => p.id === selectedProductId)
-                          ?.variations
-                          ?.filter(v => v.stock > 0)
+                          ?.find((p) => p.id === selectedProductId)
+                          ?.variations?.filter((v) => v.stock > 0)
                           .map((variation) => (
                             <SelectItem key={variation.id} value={variation.id}>
                               {variation.variation} - Estoque: {variation.stock}
@@ -425,9 +425,7 @@ export default function Sales() {
                         <div className="flex-1">
                           <p className="font-medium">{item.productName}</p>
                           {item.variationName && (
-                            <p className="text-secondary-400 text-sm font-medium">
-                              {item.variationName}
-                            </p>
+                            <p className="text-secondary-400 text-sm font-medium">{item.variationName}</p>
                           )}
                           <p className="text-gray-400 text-sm">
                             {item.quantity}x unidades - {formatPrice(Number(item.unitPrice))} cada
