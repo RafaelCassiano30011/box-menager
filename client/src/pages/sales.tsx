@@ -336,7 +336,7 @@ export default function Sales() {
                       <SelectValue placeholder="Selecione um produto" />
                     </SelectTrigger>
                     <SelectContent
-                      onKeyDown={(e) => {
+                      onKeyUp={(e) => {
                         // Evita setas, tab e enter de poluírem o input
                         if (
                           e.key.length === 1 || // teclas "digitáveis"
