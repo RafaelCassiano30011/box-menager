@@ -69,7 +69,7 @@ export default function Sales() {
     mutationFn: async (data: any) => {
       return await apiRequest("POST", "/api/sales", data);
     },
-    onSuccess: () => {
+    onSuccess: async (response) => {
       queryClient.invalidateQueries({ queryKey: ["/api/sales"] });
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
       queryClient.invalidateQueries({ queryKey: ["/api/stock-movements"] });
@@ -79,6 +79,10 @@ export default function Sales() {
         title: "Venda finalizada",
         description: "A venda foi registrada com sucesso.",
       });
+      const saleData = await response.json();
+      const saleWithItems = saleData.data as SaleWithItems;
+
+      generateReceiptPDF(saleWithItems);
     },
     onError: (error: any) => {
       toast({
@@ -205,7 +209,7 @@ export default function Sales() {
     setCartItems([]);
   };
 
-  const completeSale = () => {
+  const completeSale = async () => {
     if (cartItems.length === 0) {
       toast({
         title: "Erro",
@@ -229,7 +233,7 @@ export default function Sales() {
       })),
     };
 
-    createSaleMutation.mutate(saleData);
+    const saleResponse = await createSaleMutation.mutateAsync(saleData);
   };
 
   const getPaymentMethodBadge = (method: string) => {
