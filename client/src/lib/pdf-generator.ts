@@ -390,6 +390,7 @@ function generateReceiptHTML(sale: SaleWithItems): string {
           margin: 0;
           padding: 0;
           box-sizing: border-box;
+          font-weight: 900 !important;
         }
 
         body {
@@ -539,7 +540,11 @@ function generateReceiptHTML(sale: SaleWithItems): string {
                 <div class="item-details">
                   <span class="item-qty">${item.quantity}x</span>
                   <span class="item-name">${item.productName}</span>
-                  ${item.variationName ? `<br><span style="font-size: 8px; color: #666; margin-left: 15px;">${item.variationName}</span>` : ''}
+                  ${
+                    item.variationName
+                      ? `<br><span style="font-size: 8px; color: #666; margin-left: 15px;">${item.variationName}</span>`
+                      : ""
+                  }
                 </div>
                 <div class="item-value">R$ ${formatPrice(Number(item.subtotal))}</div>
               </div>
@@ -555,12 +560,16 @@ function generateReceiptHTML(sale: SaleWithItems): string {
             <span>R$ ${formatPrice(subtotal)}</span>
           </div>
           
-          ${totalDiscounts > 0 ? `
+          ${
+            totalDiscounts > 0
+              ? `
             <div class="total-line">
               <span>Descontos:</span>
               <span>- R$ ${formatPrice(totalDiscounts)}</span>
             </div>
-          ` : ''}
+          `
+              : ""
+          }
           
           <div class="total-line final">
             <span>TOTAL:</span>
@@ -575,7 +584,7 @@ function generateReceiptHTML(sale: SaleWithItems): string {
 
         <!-- Footer -->
         <div class="footer">
-          ${sale.customerName ? `Cliente: ${sale.customerName}<br>` : ''}
+          ${sale.customerName ? `Cliente: ${sale.customerName}<br>` : ""}
           Obrigado pela compra!<br>
           ${nameStore}
         </div>
