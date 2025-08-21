@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Minus, ShoppingCart, Eye, Printer, Download } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,6 +34,8 @@ export default function Sales() {
   const [selectedQuantity, setSelectedQuantity] = useState("1");
   const [selectedDiscount, setSelectedDiscount] = useState("0");
   const [cartItems, setCartItems] = useState<SaleItem[]>([]);
+  const [productSearch, setProductSearch] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
   const [location] = useLocation();
 
   const { toast } = useToast();
@@ -324,13 +326,54 @@ export default function Sales() {
                   <Label htmlFor="product-select" className="text-gray-300 text-sm mb-2 block">
                     Produto
                   </Label>
-                  <Select value={selectedProductId} onValueChange={setSelectedProductId}>
+                  {/* Substituir o Select de produto por versão com input visível e foco automático */}
+                  <Select
+                    value={selectedProductId}
+                    onValueChange={setSelectedProductId}
+                    // @ts-ignore: ShadCN Select não tipa onOpenChange
+                  >
                     <SelectTrigger id="product-select" className="bg-dark-900 border-gray-600 focus:border-primary-400">
                       <SelectValue placeholder="Selecione um produto" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent
+                      onKeyDown={(e) => {
+                        // Evita setas, tab e enter de poluírem o input
+                        if (
+                          e.key.length === 1 || // teclas "digitáveis"
+                          e.key === "Backspace" ||
+                          e.key === "Delete"
+                        ) {
+                          if (inputRef.current) {
+                            // Atualiza o valor do input com a tecla digitada
+                            if (e.key === "Backspace") {
+                              setProductSearch((prev) => prev.slice(0, -1));
+                            } else if (e.key === "Delete") {
+                              setProductSearch("");
+                            } else {
+                              setProductSearch((prev) => prev + e.key);
+                            }
+                          }
+                        }
+                      }}
+                    >
+                      {/* Input visível para pesquisa, sempre focado ao abrir o Select */}
+                      <div className="px-2 py-2">
+                        <Input
+                          ref={inputRef}
+                          type="text"
+                          placeholder="Pesquisar produto..."
+                          value={productSearch}
+                          onChange={(e) => setProductSearch(e.target.value)}
+                          className="bg-dark-900 border-gray-600 focus:border-primary-400 mb-2"
+                        />
+                      </div>
                       {products
-                        ?.filter((p) => p.variations && p.variations.some((v) => v.stock > 0))
+                        ?.filter(
+                          (p) =>
+                            p.variations &&
+                            p.variations.some((v) => v.stock > 0) &&
+                            (!productSearch || p.name.toLowerCase().includes(productSearch.toLowerCase()))
+                        )
                         .map((product) => (
                           <SelectItem key={product.id} value={product.id.toString()}>
                             {product.name} - R$ {formatPrice(Number(product.price))}

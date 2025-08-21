@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Package, TrendingUp, TrendingDown, Download } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,7 +18,9 @@ export default function Stock() {
   const [movementType, setMovementType] = useState("in");
   const [quantity, setQuantity] = useState("");
   const [reason, setReason] = useState("");
+  const [productSearch, setProductSearch] = useState("");
   const [location] = useLocation();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -174,15 +176,50 @@ export default function Stock() {
                   <SelectTrigger className="bg-dark-900 border-gray-600 focus:border-accent-400">
                     <SelectValue placeholder="Selecione um produto" />
                   </SelectTrigger>
-                  <SelectContent>
-                    {products?.map((product) => {
-                      const totalStock = product.variations?.reduce((sum, v) => sum + v.stock, 0) || 0;
-                      return (
-                        <SelectItem key={product.id} value={product.id.toString()}>
-                          {product.name} (Estoque Total: {totalStock})
-                        </SelectItem>
-                      );
-                    })}
+                  <SelectContent
+                    onKeyDown={(e) => {
+                      // Evita setas, tab e enter de poluírem o input
+                      if (
+                        e.key.length === 1 || // teclas "digitáveis"
+                        e.key === "Backspace" ||
+                        e.key === "Delete"
+                      ) {
+                        if (inputRef.current) {
+                          // Atualiza o valor do input com a tecla digitada
+                          if (e.key === "Backspace") {
+                            setProductSearch((prev) => prev.slice(0, -1));
+                          } else if (e.key === "Delete") {
+                            setProductSearch("");
+                          } else {
+                            setProductSearch((prev) => prev + e.key);
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    {/* Campo de pesquisa dentro do dropdown */}
+                    <div className="px-2 py-2">
+                      <Input
+                        ref={inputRef}
+                        type="text"
+                        placeholder="Pesquisar produto..."
+                        value={productSearch}
+                        onChange={(e) => setProductSearch(e.target.value)}
+                        className="bg-dark-900 border-gray-600 focus:border-accent-400 mb-2"
+                      />
+                    </div>
+                    {products
+                      ?.filter(
+                        (product) => !productSearch || product.name.toLowerCase().includes(productSearch.toLowerCase())
+                      )
+                      .map((product) => {
+                        const totalStock = product.variations?.reduce((sum, v) => sum + v.stock, 0) || 0;
+                        return (
+                          <SelectItem key={product.id} value={product.id.toString()}>
+                            {product.name} (Estoque Total: {totalStock})
+                          </SelectItem>
+                        );
+                      })}
                   </SelectContent>
                 </Select>
               </div>
