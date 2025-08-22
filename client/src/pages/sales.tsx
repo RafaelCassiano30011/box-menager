@@ -364,7 +364,7 @@ export default function Sales() {
                           placeholder="Pesquisar produto..."
                           value={productSearch}
                           onChange={(e) => setProductSearch(e.target.value)}
-                          className="bg-dark-900 border-gray-600 focus:border-primary-400 mb-2"
+                          className="bg-dark-900 border-gray-600 focus:border-primary-400 mb-2 pointer-events-none"
                         />
                       </div>
                       {products
